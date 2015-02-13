@@ -207,6 +207,7 @@
 // Index based finders.
 // ----------------------------------------------------------------------------
 
+#include <seqan/index/find_index_core.h>
 #include <seqan/index/find_index_esa.h>
 #include <seqan/index/find_index_approx.h>
 #include <seqan/index/find_index_qgram.h>
@@ -227,15 +228,16 @@
 #include <seqan/index/find2_index_multi.h>
 #include <seqan/index/find2_functors.h>
 
-
 // ----------------------------------------------------------------------------
 // Gapped index (meiers)
 // ----------------------------------------------------------------------------
 
 #include <seqan/modifier/cyclic_shape.h>
+#include <seqan/index/radix_inplace.h>
+#include <seqan/index/index_sa_radixSort.h>
 #include <seqan/index/index_gapped_dislex.h>
 #include <seqan/index/index_gapped_dislex_external.h>
-
+#include <seqan/index/index_gapped_sa.h>
 
 // ----------------------------------------------------------------------------
 // Lambda interface.

@@ -273,7 +273,9 @@ _isLeaf(Iter<Index<TText, IndexSa<TIndexSpec> >, VSTree<TSpec> > const & it,
     // if the last suffix in the interval is larger than the lcp,
     // not all outgoing edges are empty (uses lex. sorting)
     TOcc oc = _lastOccurrence(it);
-    return getSeqOffset(oc, stringSetLimits(index)) + lcp == sequenceLength(getSeqNo(oc, stringSetLimits(index)), index);
+
+    return suffixLength(oc, index) == lcp;
+//  return getSeqOffset(oc, stringSetLimits(index)) + lcp == sequenceLength(getSeqNo(oc, stringSetLimits(index)), index);
 }
 
 template <typename TIndex, typename TSize, typename TAlphabet>
@@ -335,7 +337,6 @@ inline bool _goDown(Iter<Index<TText, IndexSa<TIndexSpec> >, VSTree<TopDown<TSpe
 
     TIndex const & index = container(it);
     TSA const & sa = indexSA(index);
-    TText const & text = indexText(index);
 
     // TODO(esiragusa): check nodeHullPredicate
 
@@ -357,9 +358,25 @@ inline bool _goDown(Iter<Index<TText, IndexSa<TIndexSpec> >, VSTree<TopDown<TSpe
             return false;
     }
 
-    // Get first and last characters in interval.
-    TAlphabet cLeft = textAt(posAdd(saAt(saRange.i1, index), value(it).repLen), index);
-    TAlphabet cRight = textAt(posAdd(saAt(saRange.i2 - 1, index), value(it).repLen), index);
+    typedef typename SuffixFunctor<TIndex, typename Value<TSA>::Type>::result_type TSuffix;
+    SuffixFunctor<TIndex, typename Value<TSA>::Type> dereferer(index);
+
+    TAlphabet cLeft, cRight;
+
+    // switch for gapped suffixes; note that both should result in the same characters,
+    // the former one might just have less overhead.
+    if (IsSameType<TIndexSpec, void>::VALUE)
+    {
+        cLeft = textAt(posAdd(saAt(saRange.i1, index), value(it).repLen), index);
+        cRight= textAt(posAdd(saAt(saRange.i2 - 1, index), value(it).repLen), index);
+    }
+    else
+    {
+        // generate suffixes and the take the char at position 'repLen'
+        cLeft  = value(dereferer(saAt(saRange.i1, index)),    value(it).repLen);
+        cRight = value(dereferer(saAt(saRange.i2 -1, index)), value(it).repLen);
+    }
+
 
 #ifdef SEQAN_DEBUG
     std::cout << "char: " << Pair<TAlphabet>(cLeft, cRight) << std::endl;
@@ -379,7 +396,8 @@ inline bool _goDown(Iter<Index<TText, IndexSa<TIndexSpec> >, VSTree<TopDown<TSpe
         TSASize saLen = saRange.i2 - saRange.i1;
         TSearchTreeIterator node(saBegin, saLen);
 
-        TSAIterator upperBound = _upperBoundSA(text, node, cLeft, value(it).repLen);
+        SuffixFunctor<TIndex, typename Value<TSA>::Type> dereferer(index);
+        TSAIterator upperBound = _upperBoundSA(dereferer, node, cLeft, value(it).repLen);
 
         value(it).range.i2 = upperBound - begin(sa, Standard());
     }
@@ -442,9 +460,26 @@ inline bool _goRight(Iter<Index<TText, IndexSa<TIndexSpec> >, VSTree<TopDown<TSp
             return false;
     }
 
-    // Get first and last characters in interval.
-    TAlphabet cLeft = textAt(posAdd(saAt(saRange.i1, index), value(it).repLen), index);
-    TAlphabet cRight = textAt(posAdd(saAt(saRange.i2 - 1, index), value(it).repLen), index);
+    typedef typename SuffixFunctor<TIndex, typename Value<TSA>::Type>::result_type TSuffix;
+    SuffixFunctor<TIndex, typename Value<TSA>::Type> dereferer(index);
+
+    TAlphabet cLeft, cRight;
+
+    // switch for gapped suffixes; note that both should result in the same characters,
+    // the former one might just have less overhead.
+    if (IsSameType<TIndexSpec, void>::VALUE)
+    {
+        cLeft = textAt(posAdd(saAt(saRange.i1, index), value(it).repLen), index);
+        cRight= textAt(posAdd(saAt(saRange.i2 - 1, index), value(it).repLen), index);
+    }
+    else
+    {
+        // generate suffixes and the take the char at position 'repLen'
+        cLeft  = value(dereferer(saAt(saRange.i1, index)),    value(it).repLen);
+        cRight = value(dereferer(saAt(saRange.i2 -1, index)), value(it).repLen);
+    }
+
+
 
     SEQAN_ASSERT_NEQ(ordValue(cLeft), ordValue(value(it).lastChar));
 
@@ -463,8 +498,7 @@ inline bool _goRight(Iter<Index<TText, IndexSa<TIndexSpec> >, VSTree<TopDown<TSp
         TSASize saLen = saRange.i2 - saRange.i1;
         TSearchTreeIterator node(saBegin, saLen);
 
-        TText const & text = indexText(index);
-        TSAIterator upperBound = _upperBoundSA(text, node, cLeft, value(it).repLen);
+        TSAIterator upperBound = _upperBoundSA(dereferer, node, cLeft, value(it).repLen);
 
         value(it).range.i2 = upperBound - begin(sa, Standard());
     }
@@ -484,6 +518,42 @@ inline bool _goRight(Iter<Index<TText, IndexSa<TIndexSpec> >, VSTree<TopDown<TSp
     return true;
 }
 
+//TODO(meiers): This needs reviewing
+
+// NOTE(meiers): Shortcut for going down edges character-wise. If the borders are labeled already
+//               with the specific char no binary search has to be performed.
+template <typename TText, typename TIndexSpec, typename TSpec, typename TValue>
+inline bool _isEdge(Iter<Index<TText, IndexSa<TIndexSpec> >, VSTree<TopDown<TSpec> > > & it, TValue c)
+{
+    typedef Index<TText, IndexSa<TIndexSpec> >              TIndex;
+    typedef typename Fibre<TIndex, FibreSA>::Type           TSA;
+    typedef typename Size<TIndex>::Type                     TSASize;
+    typedef typename Iterator<TSA const, Standard>::Type    TSAIterator;
+
+    if(isRoot(it)) return false;
+    if(value(it).range.i2 == value(it).range.i1) return false;
+
+    TIndex const & index = container(it);
+    TSA const & sa = indexSA(index);
+    TSASize repLen = value(it).repLen;
+    TSAIterator l = begin(sa, Standard()) + value(it).range.i1;
+    TSAIterator r = begin(sa, Standard()) + value(it).range.i2 - 1;
+    
+    typedef SuffixFunctor<TIndex, typename Value<TSA>::Type>    TSufFunctor;
+    typedef typename TSufFunctor::result_type                   TSuffix;
+    typedef typename Iterator<TSuffix const>::Type              TSufIter;
+
+    TSufFunctor dereferer(index);
+    TSufIter lit = begin(dereferer(*l)) + repLen, len = end(dereferer(*l));
+    TSufIter rit = begin(dereferer(*r)) + repLen, ren = end(dereferer(*r));
+
+    if (lit < len && rit < ren && *lit == c && *rit == c)
+        return true;
+ 
+    return false;
+}
+
+
 template <typename TText, typename TIndexSpec, typename TSpec, typename TValue>
 inline bool _goDownChar(Iter<Index<TText, IndexSa<TIndexSpec> >, VSTree<TopDown<TSpec> > > & it, TValue c)
 {
@@ -496,33 +566,42 @@ inline bool _goDownChar(Iter<Index<TText, IndexSa<TIndexSpec> >, VSTree<TopDown<
     // Save vertex descriptor.
     _historyPush(it);
 
-    TIndex const & index = container(it);
-    TSA const & sa = indexSA(index);
-    TText const & text = indexText(index);
+    TIndex const & index   = container(it);
+    TSA const &    sa      = indexSA(index);
+    TSAIterator    saBegin = begin(sa, Standard()) + value(it).range.i1;
+    TSASize        saLen   = isRoot(it) ? length(sa) : value(it).range.i2 - value(it).range.i1;
 
-#ifdef SEQAN_DEBUG
-    std::cout << "parent: " << value(it).range << std::endl;
-#endif
-
-    TSAIterator saBegin = begin(sa, Standard()) + value(it).range.i1;
-    TSASize saLen = isRoot(it) ? length(sa) : value(it).range.i2 - value(it).range.i1;
     TSearchTreeIterator node(saBegin, saLen);
-    Pair<TSAIterator> range = _equalRangeSA(text, node, c, value(it).repLen);
 
-    if (range.i1 >= range.i2)
-        return false;
+    typedef SuffixFunctor<TIndex, typename Value<TSA>::Type> TSuf;
+    TSuf  dereferer(index);
 
-    // Update range, lastChar and repLen.
-    value(it).range.i1 = range.i1 - begin(sa, Standard());
-    value(it).range.i2 = range.i2 - begin(sa, Standard());
-    value(it).repLen++;
-    value(it).lastChar = c;
+    // Check whether this is an edge, not a node of the suffix tree
+    // NOTE(meiers): disable this branch because it is slower
+    if ( false   &&  _isEdge(it,c))
+    {
+        value(it).lastChar = c;
+        value(it).repLen++;
+        return true;
+    }
+    else
+    { 
+        Pair<TSAIterator> range = _equalRangeSA(dereferer, node, c, value(it).repLen);
 
-#ifdef SEQAN_DEBUG
-    std::cout << "child: " <<  value(it).range << std::endl;
-#endif
+        if (!(range.i1 < range.i2))
+            return false;
 
-    return true;
+        // Save vertex descriptor.
+        _historyPush(it);
+    
+        // Update range, lastChar and repLen.
+        value(it).range.i1 = range.i1 - begin(sa, Standard());
+        value(it).range.i2 = range.i2 - begin(sa, Standard());
+        value(it).lastChar = c;
+        value(it).repLen++;
+    
+        return true;
+    }
 }
 
 template <typename TText, typename TIndexSpec, typename TSpec, typename TString, typename TSize>
@@ -535,37 +614,29 @@ inline bool _goDownString(Iter<Index<TText, IndexSa<TIndexSpec> >, VSTree<TopDow
     typedef typename Iterator<TSA const, Standard>::Type    TSAIterator;
     typedef SearchTreeIterator<TSA const, SortedList>       TSearchTreeIterator;
 
+
+    if (_isLeaf(it, HideEmptyEdges()))
+        return false;
+
+    TIndex const & index = container(it);
+    TSA const & sa = indexSA(index);
+
+    TSAIterator saBegin = begin(sa, Standard()) + value(it).range.i1;
+    TSASize saLen = isRoot(it) ? length(sa) : value(it).range.i2 - value(it).range.i1;
+    TSearchTreeIterator node(saBegin, saLen);
+    SuffixFunctor<TIndex, typename Value<TSA>::Type> dereferer(index);
+    Pair<TSAIterator> range = _equalRangeSA(dereferer, node, pattern, value(it).repLen);
+
+    if (range.i1 >= range.i2)
+        return false;
+    
     // Save vertex descriptor.
     _historyPush(it);
 
-#ifdef SEQAN_DEBUG
-    std::cout << "parent: " << value(it).range << std::endl;
-#endif
-
-    if (!empty(pattern))
-    {
-        TIndex const & index = container(it);
-        TSA const & sa = indexSA(index);
-        TText const & text = indexText(index);
-
-        TSAIterator saBegin = begin(sa, Standard()) + value(it).range.i1;
-        TSASize saLen = isRoot(it) ? length(sa) : value(it).range.i2 - value(it).range.i1;
-        TSearchTreeIterator node(saBegin, saLen);
-        Pair<TSAIterator> range = _equalRangeSA(text, node, pattern, value(it).repLen);
-
-        if (range.i1 >= range.i2)
-            return false;
-
-        // Update range, lastChar and repLen.
-        value(it).range.i1 = range.i1 - begin(sa, Standard());
-        value(it).range.i2 = range.i2 - begin(sa, Standard());
-        value(it).repLen += length(pattern);
-        value(it).lastChar = back(pattern);
-    }
-
-#ifdef SEQAN_DEBUG
-    std::cout << "child: " <<  value(it).range << std::endl;
-#endif
+    value(it).range.i1 = range.i1 - begin(sa, Standard());
+    value(it).range.i2 = range.i2 - begin(sa, Standard());
+    value(it).repLen += length(pattern);
+    value(it).lastChar = back(pattern);
 
     lcp = length(pattern);
 

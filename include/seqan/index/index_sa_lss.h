@@ -369,21 +369,22 @@ struct ContextLss_
     template < typename TSA,
                typename TText >
     void createSuffixArray(
-        TSA &SA,
-        TText const &s,
-        LarssonSadakane const &,
-        unsigned K)
-    {
-        typedef typename Value<TSA>::Type            TValue;
-        typedef typename MakeSigned_<TValue>::Type    TSValue;    // LarssonSadakane expects signed values
-        ContextLss_<TSValue> c;
-        c.suffixsort(
-            (TSValue*)begin(s, Standard()),        // text
-            (TSValue*)begin(SA, Standard()),    // SA
-            length(s) - 1,                        // n
-            K,                                    // text[i] <  K
-            0);                                    // text[i] >= 0
-    }
+		TSA &SA,
+		TText const &s,
+		LarssonSadakane const &,
+		unsigned K,
+        unsigned)
+	{
+		typedef typename Value<TSA>::Type			TValue;
+		typedef typename MakeSigned_<TValue>::Type	TSValue;	// LarssonSadakane expects signed values
+		ContextLss_<TSValue> c;
+		c.suffixsort(
+			(TSValue*)begin(s, Standard()),		// text
+			(TSValue*)begin(SA, Standard()),	// SA
+			length(s) - 1,						// n
+			K,									// text[i] <  K
+			0);									// text[i] >= 0
+	}
 
     //////////////////////////////////////////////////////////////////////////////
     // qsufsort pipe

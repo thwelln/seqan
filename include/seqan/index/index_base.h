@@ -515,8 +515,9 @@ template <
     struct Position< Index<TText, TSpec> >:
         SAValue< Index<TText, TSpec> > {};
 
-//////////////////////////////////////////////////////////////////////////////
-// infix of an index
+// ----------------------------------------------------------------------------
+// Metafunction Infix                                                for Index
+// ----------------------------------------------------------------------------
 
     template < typename TText, typename TSpec >
     struct Infix< Index<TText, TSpec> >:
@@ -525,6 +526,22 @@ template <
     template < typename TText, typename TSpec >
     struct Infix< Index<TText, TSpec> const >:
         public Infix<TText> {};
+
+    
+// ----------------------------------------------------------------------------
+// Metafunction Suffix                                                for Index
+// ----------------------------------------------------------------------------
+
+// general Index
+template <typename TText, typename TSpec>
+struct Suffix<Index<TText, TSpec> > :
+    public Suffix<TText> {};
+
+// general Index; const variant
+template <typename TText, typename TSpec>
+struct Suffix<Index<TText, TSpec> const> :
+    public Suffix<TText const> {};
+
 
 //////////////////////////////////////////////////////////////////////////////
 // default table type
@@ -984,16 +1001,19 @@ template <
     SEQAN_HOST_DEVICE inline typename Size<Index<TText, TSpec> >::Type
     suffixLength(TPos pos, Index<TText, TSpec> const &index)
     {
-        return length(indexText(index)) - pos;
-    }
-
-    template <typename TPos, typename TString, typename TSSetSpec, typename TSpec>
-    SEQAN_HOST_DEVICE inline typename Size<Index<StringSet<TString, TSSetSpec>, TSpec> >::Type
-    suffixLength(TPos pos, Index<StringSet<TString, TSSetSpec>, TSpec> const &index)
+        //TODO(meiers): This might be slower for regular (non-gapped) index. Use below function instead
+        return length(suffix(index, pos) );
+		//return length(indexText(index)) - pos;
+	}
+/*
+	template <typename TPos, typename TString, typename TSSetSpec, typename TSpec>
+	SEQAN_HOST_DEVICE inline typename Size<Index<StringSet<TString, TSSetSpec>, TSpec> >::Type 
+	suffixLength(TPos pos, Index<StringSet<TString, TSSetSpec>, TSpec> const &index)
     {
         typename StringSetLimits<StringSet<TString, TSSetSpec> >::Type const &limits = stringSetLimits(index);
-        return sequenceLength(getSeqNo(pos, limits), index) - getSeqOffset(pos, limits);
-    }
+		return sequenceLength(getSeqNo(pos, limits), index) - getSeqOffset(pos, limits);
+	}
+*/
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1044,8 +1064,9 @@ template <
         return value(value(getFibre(index, FibreText()), getValueI1(locPos)), getValueI2(locPos));
     }
 
-//////////////////////////////////////////////////////////////////////////////
-// infix
+// ----------------------------------------------------------------------------
+// Function infix()                                                   for Index
+// ----------------------------------------------------------------------------
 
     template <typename TText, typename TSpec, typename TPosBegin, typename TPosEnd>
     inline typename Infix<TText>::Type
@@ -1060,6 +1081,44 @@ template <
     {
         return infix(indexText(index), pos_begin, pos_end);
     }
+
+// ----------------------------------------------------------------------------
+// Function infixWithLength()                                         for Index
+// ----------------------------------------------------------------------------
+
+template <typename TText, typename TSpec, typename TPosBegin, typename TSize>
+inline typename Infix<Index<TText, TSpec> >::Type
+infixWithLength(Index<TText, TSpec> &index, TPosBegin pos_begin, TSize length)
+{
+    return infixWithLength(index, pos_begin, length);
+}
+
+template <typename TText, typename TSpec, typename TPosBegin, typename TSize>
+inline typename Infix<Index<TText, TSpec> const>::Type
+infixWithLength(Index<TText, TSpec> const &index, TPosBegin pos_begin, TSize length)
+{
+    return infixWithLength(indexText(index), pos_begin, length);
+}
+
+// ----------------------------------------------------------------------------
+// Function suffix()                                                  for Index
+// ----------------------------------------------------------------------------
+
+// general Index
+template <typename TText, typename TSpec, typename TPosBegin>
+inline typename Suffix<TText>::Type
+suffix(Index<TText, TSpec> & t, TPosBegin pos_begin)
+{
+    return suffix(indexText(t), pos_begin);
+}
+
+// general Index: const variant
+template <typename TText, typename TSpec, typename TPosBegin>
+inline typename Suffix<TText const>::Type
+suffix(Index<TText, TSpec> const &t, TPosBegin pos_begin)
+{
+    return suffix(indexText(t), pos_begin);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 /*!

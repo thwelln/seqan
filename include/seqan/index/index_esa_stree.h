@@ -1,4 +1,4 @@
-// ==========================================================================
+ // ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 // Copyright (c) 2006-2015, Knut Reinert, FU Berlin
@@ -1288,12 +1288,14 @@ SEQAN_CONCEPT_IMPL((Index<TText, IndexEsa<TSpec> > const), (StringTreeConcept));
  * @link DemoMaximalUniqueMatches @endlink
  */
 
-    template < typename TIndex, class TSpec >
-    SEQAN_HOST_DEVICE inline typename Infix< typename Fibre<TIndex, FibreText>::Type const >::Type
-    representative(Iter< TIndex, VSTree<TSpec> > const &it)
-    {
-        return infixWithLength(indexText(container(it)), getOccurrence(it), repLength(it));
-    }
+	template < typename TIndex, class TSpec >
+	SEQAN_HOST_DEVICE inline typename Infix<TIndex const>::Type 
+	representative(Iter< TIndex, VSTree<TSpec> > const &it) 
+	{
+        //TODO(meiers): review
+        TIndex const & index = container(it);
+		return infixWithLength(index, getOccurrence(it), repLength(it));
+	}
 
 
 //////////////////////////////////////////////////////////////////////////////
