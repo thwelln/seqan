@@ -1,7 +1,7 @@
 // ========================================================================== 
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
-// Copyright (c) 2006-2015, Knut Reinert, FU Berlin
+// Copyright (c) 2006-2013, Knut Reinert, FU Berlin
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -267,6 +267,7 @@ public:
      * an index position keeps track of the position inside <tt>diffs</tt>.
      */
     static const typename Size<CyclicShape>::Type diffs[];
+    static const typename Size<CyclicShape>::Type carePos[];
 
     /*!
      * @fn FixedCyclicShape::CyclicShape
@@ -352,6 +353,45 @@ CyclicShape<FixedShape<L, GappedShape<HardwiredShape
 
 #undef ENTRY
 
+    // --------------------------------------------------------------------------
+    // static const int CyclicShape<FixedShape<L, TSpec, R> >::carePos[]
+    // --------------------------------------------------------------------------
+
+
+template<unsigned L, unsigned R,
+    int P00, int P01, int P02, int P03, int P04,
+    int P05, int P06, int P07, int P08, int P09,
+    int P10, int P11, int P12, int P13, int P14,
+    int P15, int P16, int P17, int P18, int P19>
+const typename Size<CyclicShape<FixedShape<L, GappedShape<HardwiredShape
+    <P00, P01, P02, P03, P04, P05, P06, P07, P08, P09, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19>
+    >, R> > >::Type
+CyclicShape<FixedShape<L, GappedShape<HardwiredShape
+    <P00, P01, P02, P03, P04, P05, P06, P07, P08, P09, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19>
+    >, R> >::carePos[] =
+{
+    L,
+    P00+L,
+    P01+P00+L,
+    P02+P01+P00+L,
+    P03+P02+P01+P00+L,
+    P04+P03+P02+P01+P00+L,
+    P05+P04+P03+P02+P01+P00+L,
+    P06+P05+P04+P03+P02+P01+P00+L,
+    P07+P06+P05+P04+P03+P02+P01+P00+L,
+    P08+P07+P06+P05+P04+P03+P02+P01+P00+L,
+    P09+P08+P07+P06+P05+P04+P03+P02+P01+P00+L,
+    P10+P09+P08+P07+P06+P05+P04+P03+P02+P01+P00+L,
+    P11+P10+P09+P08+P07+P06+P05+P04+P03+P02+P01+P00+L,
+    P12+P11+P10+P09+P08+P07+P06+P05+P04+P03+P02+P01+P00+L,
+    P13+P12+P11+P10+P09+P08+P07+P06+P05+P04+P03+P02+P01+P00+L,
+    P14+P13+P12+P11+P10+P09+P08+P07+P06+P05+P04+P03+P02+P01+P00+L,
+    P15+P14+P13+P12+P11+P10+P09+P08+P07+P06+P05+P04+P03+P02+P01+P00+L,
+    P16+P15+P14+P13+P12+P11+P10+P09+P08+P07+P06+P05+P04+P03+P02+P01+P00+L,
+    P17+P16+P15+P14+P13+P12+P11+P10+P09+P08+P07+P06+P05+P04+P03+P02+P01+P00+L,
+    P18+P17+P16+P15+P14+P13+P12+P11+P10+P09+P08+P07+P06+P05+P04+P03+P02+P01+P00+L,
+    P19+P18+P17+P16+P15+P14+P13+P12+P11+P10+P09+P08+P07+P06+P05+P04+P03+P02+P01+P00+L
+};
 
 
 // ==========================================================================
@@ -507,12 +547,13 @@ cyclicShapeToString(
     TShapeString & bitmap,
     CyclicShape<TSpec> const & me)
 {
+    typedef typename Size<CyclicShape<TSpec> >::Type TSize;
     clear(bitmap);
     if (weight(me) == 0)
         return;
 
-    typename Size<CyclicShape<TSpec> >::Type i, j;
-    for (i = 0; i < me.loffset; ++i)
+    TSize i, j;
+    for (i = 0; i < static_cast<TSize>(me.loffset); ++i)
         appendValue(bitmap, '0');
     for (i = 0; i < weight(me) - 1; ++i)
     {
@@ -549,20 +590,36 @@ cyclicShapeToString(
  * @snippet demos/cyclic_shape_snippets.cpp CyclicShape Care Positions
  */
 
-template<typename TString, typename TSpec>
+template<typename TString>
 inline void
-carePositions(TString & output, CyclicShape<TSpec> const & shape)
+carePositions(TString & output, CyclicShape<GenericShape> const & shape)
 {
-    typedef typename Size<CyclicShape<TSpec> >::Type TPos;
+    typedef typename Size<CyclicShape<GenericShape> >::Type TPos;
+    typedef typename Value<TString>::Type                   TValue;
 
     resize(output, weight(shape));
-    TPos val = shape.loffset;
+    TValue val = static_cast<TValue>(shape.loffset);
     output[0] = shape.loffset;
 
     for (TPos i = 1; i < weight(shape); ++i)
     {
-        val += shape.diffs[i - 1];
+        val += static_cast<TValue>(shape.diffs[i - 1]);
         output[i] = val;
+    }
+}
+
+template<typename TString, unsigned L, typename THardwiredShape, unsigned R>
+inline void
+carePositions(TString & output, CyclicShape<FixedShape<L, THardwiredShape, R> > const &)
+{
+    typedef CyclicShape<FixedShape<L, THardwiredShape, R> > TShape;
+    typedef typename Size<TString>::Type                    TSize;
+    typedef typename Value<TString>::Type                   TValue;
+
+    resize(output, static_cast<TSize>(WEIGHT<TShape>::VALUE));
+    for (TSize i = 0; i < static_cast<TSize>(WEIGHT<TShape>::VALUE); ++i)
+    {
+        output[i] = static_cast<TValue>(TShape::carePos[i]);
     }
 }
 

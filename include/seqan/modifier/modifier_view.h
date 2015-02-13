@@ -159,6 +159,12 @@ public:
         cargo(*this).func = functor;
     }
 
+    // construct with cargo object
+    explicit
+    ModifiedString(typename Parameter_<THost>::Type host, TCargo_ const & cargo) :
+    _host(_toPointer(host)), _cargo(cargo)
+    {}
+
     // Constructor for creating a ModifiedString with const host from a non-const host.
     template <typename THost_>
     explicit
@@ -174,6 +180,16 @@ public:
             _host(_toPointer(host)), tmp_value()
     {
         cargo(*this).func = functor;
+    }
+
+    // construct with cargo object
+    template <typename THost_>
+    explicit
+    ModifiedString(THost_ & host, TCargo_ const & cargo,
+                   SEQAN_CTOR_ENABLE_IF(IsConstructible<THost, THost_>)) :
+    _host(_toPointer(host)), _cargo(cargo)
+    {
+        ignoreUnusedVariableWarning(dummy);
     }
 
     // Constructor for creating a ModifiedString with const host with a non-const host; variant with functor.

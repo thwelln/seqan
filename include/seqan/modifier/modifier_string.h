@@ -99,6 +99,12 @@ template <typename TType, typename TTestType> struct IsAnInnerHost;
 template <typename THost, typename TSpec = void>
 class ModifiedString
 {
+
+    // TODO(meiers): For a better standardization and the integration into
+    //               the generalized index, all ModifiedString should have a
+    //               constructor that takes the Host String as well as
+    //               the Cargo type, even if this Cargo is useless.
+    //               I tried to integrate this here (*) but I am not really know what I'm doing.
 public:
     typedef typename Pointer_<THost>::Type       THostPointer_;
     typedef typename Cargo<ModifiedString>::Type TCargo_;
@@ -115,12 +121,28 @@ public:
     ModifiedString(typename Parameter_<THost>::Type host) : _host(_toPointer(host)), _cargo()
     {}
 
+    // (*)
+    explicit
+    ModifiedString(typename Parameter_<THost>::Type host, TCargo_ const & cargo) :
+        _host(_toPointer(host)), _cargo(cargo)
+    {}
+
     // Constructor for creating a ModifiedString with const host from a non-const host.
     template <typename THost_>
     explicit
     ModifiedString(THost_ & host,
                    SEQAN_CTOR_ENABLE_IF(IsConstructible<THost, THost_>)) :
             _host(_toPointer(host)), _cargo()
+    {
+        ignoreUnusedVariableWarning(dummy);
+    }
+
+    // (*)
+    template <typename THost_>
+    explicit
+    ModifiedString(THost_ & host, TCargo_ const & cargo,
+                   SEQAN_CTOR_ENABLE_IF(IsConstructible<THost, THost_>)) :
+    _host(_toPointer(host)), _cargo(cargo)
     {
         ignoreUnusedVariableWarning(dummy);
     }

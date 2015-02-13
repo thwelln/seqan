@@ -86,15 +86,23 @@ typedef Tag<ModReverse_> ModReverse;
 // Metafunction Cargo                           [ModReverse ModifiedIterator]
 // --------------------------------------------------------------------------
 
+// NOTE(meiers): Fixed Cargo type, independent from other specifications of the
+//               modified Iterator (one type for all variants)
+struct ModReverseCargo
+{
+    typedef ModReverseCargo Type;
+    bool _atEnd;
+
+    ModReverseCargo() : _atEnd(false)
+    {}
+};
+
 template <typename THost>
 struct Cargo<ModifiedIterator<THost, ModReverse> >
 {
-    typedef Cargo Type;        // to reduce namespace pollution
-    bool _atEnd;
-
-    Cargo() : _atEnd(false)
-    {}
+    typedef ModReverseCargo Type;
 };
+
 
 // --------------------------------------------------------------------------
 // Metafunction Iterator                          [ModReverse ModifiedString]
