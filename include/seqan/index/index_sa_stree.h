@@ -607,13 +607,15 @@ inline bool _goDownChar(Iter<Index<TText, IndexSa<TIndexSpec> >, VSTree<TopDown<
 
     // Check whether this is an edge, not a node of the suffix tree
     // NOTE(meiers): disable this branch because it is slower
-    if ( false   &&  _isEdge(it,c))
+#if 0
+    if (_isEdge(it,c))
     {
         value(it).lastChar = c;
         value(it).repLen++;
         return true;
     }
     else
+#endif
     { 
         Pair<TSAIterator> range = _equalRangeSA(dereferer, node, c, value(it).repLen);
 

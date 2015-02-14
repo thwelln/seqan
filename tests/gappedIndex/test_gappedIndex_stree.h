@@ -57,85 +57,86 @@ SEQAN_DEFINE_TEST(test_gappedIndex_top_down_traversal)
     typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<3> >, 0> >      TShape; //1001
     typedef Index<Peptide, IndexSa<Gapped<ModCyclicShape<TShape> > > >  TIndex;        // Gapped<ModCyclicShape<TShape> >
 
-    Peptide s = "KeinerKleinerFeinerReinerHeiligerWeicherNeider";
+    Peptide     s = "NHLDHCNMHLDHCQHLDHCCHLDHCKHLMLIHCVHLFKHCDHLEHC";
     TIndex index(s, TShape());            //, TShape()
     indexRequire(index, FibreSA());
 
     typedef Suffix<TIndex>::Type TModSuff;
 
+
     // Suffix array (ouput of:)
     //for (unsigned i=0; i<length(indexSA(index)); ++i)
     //    std::cout << "//  " << i << "\t" << indexSA(index)[i] << "\t" << suffix(index, indexSA(index)[i]) << std::endl;
     //
-    //  0	45	R                       *
-    //  1	19	RNEEIGEEIERID
-    //  2	5	REIRFNEEIRHLIRWCHNEER
-    //  3	12	RINREERILERICRNDE
-    //  4	18	RINHEIGWEHEEIR
-    //  5	39	RID
-    //  6	32	RICRNDE
-    //  7	24	RILERICRNDE
-    //  8	16	NREERILERICRNDE         *
-    //  9	40	NDE
-    //  10	22	NHEIGWEHEEIR
-    //  11	3	NKLNEEIRRNEEIGEEIERID
-    //  12	10	NFEERINHEIGWEHEEIR
-    //  13	43	D                       *
-    //  14	36	CRNDE                   *
-    //  15	44	E                       *---+
-    //  16	41	EER                         *---+---+
-    //  17	1	EEREIRFNEEIRHLIRWCHNEER             *
-    //  18	8	EERINREERILERICRNDE                 *---+---+
-    //  19	14	EERINHEIGWEHEEIR
-    //  20	20	EERILERICRNDE                               *
-    //  21	38	EEIR                            *---+---+---+
-    //  22	11	EEIRRNEEIGEEIERID
-    //  23	17	EEIRHLIRWCHNEER
-    //  24	31	EEIERID
-    //  25	23	EEIGEEIERID
-    //  26	34	EHEEIR                      *---+
-    //  27	26	EIGWEHEEIR                  *
-    //  28	4	ELEERINREERILERICRNDE       *
-    //  29	30	GWEHEEIR                *---+
-    //  30	37	HNEER                   *
-    //  31	25	HLIRWCHNEER
-    //  32	42	IR                      *
-    //  33	15	IRRNEEIGEEIERID
-    //  34	21	IRHLIRWCHNEER
-    //  35	2	IRKINFEERINHEIGWEHEEIR
-    //  36	9	IRFNEEIRHLIRWCHNEER
-    //  37	29	IRWCHNEER
-    //  38	35	IERID
-    //  39	27	IGEEIERID
-    //  40	7	LNEEIRRNEEIGEEIERID     *
-    //  41	28	LERICRNDE
-    //  42	0	KNELEERINREERILERICRNDE *
-    //  43	6	KINFEERINHEIGWEHEEIR
-    //  44	13	FNEEIRHLIRWCHNEER       *
-    //  45	33	WCHNEER                 *
+    //  0	45	C
+    //  1	19	CDHHLIHHLHCL
+    //  2	5	CHLCQDHHLCKMLCVFKDHH
+    //  3	12	CLDCHHCLMHCLFCDE
+    //  4	18	CLDKHLIVHKHHL
+    //  5	39	CL
+    //  6	32	CLFCDE
+    //  7	24	CLMHCLFCDE
+    //  8	16	DCHHCLMHCLFCDEH
+    //  9	40	DE
+    //  10	22	DKHLIVHKHHL
+    //  11	3	DNMDHHLCCDHHLIHHLHCL
+    //  12	10	DQHHCLDKHLIVHKHHL
+    //  13	43	E
+    //  14	36	FCDEH
+    //  15	44	H                       *---
+    //  16	41	HHC                         *---+---
+    //  17	1	HHCHLCQDHHLCKMLCVFKDHHC
+    //  18	8	HHCLDCHHCLMHCLFCDEH                 *---+---
+    //  19	14	HHCLDKHLIVHKHHL
+    //  20	20	HHCLMHCLFCDEH
+    //  21	38	HHLC                            *---+---+---
+    //  22	11	HHLCCDHHLIHHLHCL
+    //  23	17	HHLCKMLCVFKDHH
+    //  24	31	HHLHCL
+    //  25	23	HHLIHHLHCL
+    //  26	34	HKHHLC                      *---
+    //  27	26	HLIVHKHHLC
+    //  28	4	HMHHCLDCHHCLMHCLFCDEH
+    //  29	30	IVHKHHLC                *---
+    //  30	37	KDHHC
+    //  31	25	KMLCVFKDHH
+    //  32	42	LC
+    //  33	15	LCCDHHLIHHLHCL
+    //  34	21	LCKMLCVFKDHH
+    //  35	2	LCNLDQHHCLDKHLIVHKHHL
+    //  36	9	LCQDHHLCKMLCVFKDHH
+    //  37	29	LCVFKDHH
+    //  38	35	LHCL
+    //  39	27	LIHHLHCL
+    //  40	7	MDHHLCCDHHLIHHLHCLE
+    //  41	28	MHCLFCDE
+    //  42	0	NDHMHHCLDCHHCLMHCLFCDEH
+    //  43	6	NLDQHHCLDKHLIVHKHHL
+    //  44	13	QDHHLCKMLCVFKDHHC
+    //  45	33	VFKDHHC
 
 
     Iterator<TIndex, TopDown<> >::Type treeIter(index);
 
-    goDown(treeIter, 'E');
+    goDown(treeIter, 'H');
     SEQAN_ASSERT_EQ(range(treeIter), Pair<unsigned>(15,29));
 
-    goDown(treeIter, 'E');
+    goDown(treeIter, 'H');
     SEQAN_ASSERT_EQ(range(treeIter), Pair<unsigned>(16,26));
 
-    SEQAN_ASSERT_EQ(representative(treeIter), "EE");
+    SEQAN_ASSERT_EQ(representative(treeIter), "HH");
     SEQAN_ASSERT_EQ(repLength(treeIter), 2u);
 
-    goDown(treeIter, 'R');
+    goDown(treeIter, 'C');
     SEQAN_ASSERT_EQ(range(treeIter), Pair<unsigned>(16,21));
 
     goRight(treeIter);
     SEQAN_ASSERT_EQ(range(treeIter), Pair<unsigned>(21,26));
 
     goRoot(treeIter);
-    goDown(treeIter, "EEIR");
+    goDown(treeIter, "HHLC");
     SEQAN_ASSERT_EQ(range(treeIter), Pair<unsigned>(21,24));
-    SEQAN_ASSERT_EQ(representative(treeIter), "EEIR");
+    SEQAN_ASSERT_EQ(representative(treeIter), "HHLC");
     SEQAN_ASSERT_EQ(repLength(treeIter), 4u);
 
 
@@ -143,19 +144,19 @@ SEQAN_DEFINE_TEST(test_gappedIndex_top_down_traversal)
     for (unsigned i=0; i<13; ++i, ++myIterator)
     {}
 
-    SEQAN_ASSERT_EQ(representative(myIterator), "RNEEIGEEIERID");
+    SEQAN_ASSERT_EQ(representative(myIterator), "CDHHLIHHLHCLE");
     SEQAN_ASSERT(_isLeaf(myIterator, HideEmptyEdges()));
     SEQAN_ASSERT_NOT(goDown(myIterator));
 
     ++myIterator;
-    SEQAN_ASSERT_EQ(representative(myIterator), "RE");
+    SEQAN_ASSERT_EQ(representative(myIterator), "CH");
 
     Iterator<TIndex, TopDown< ParentLinks<Preorder> > >::Type iter2 = myIterator;
 
     ++myIterator;
     for (; !atEnd(myIterator); ++myIterator, ++iter2)
     {}
-    SEQAN_ASSERT_EQ(representative(iter2), "WCHNEER");
+    SEQAN_ASSERT_EQ(representative(iter2), "VFKDHHC");
 
 }
 
