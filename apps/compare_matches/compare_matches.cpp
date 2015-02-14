@@ -176,7 +176,7 @@ readRecord(TReader & reader, TMatch & match, Gff) {
             clear(buffer);
             res = readDigits(buffer, reader);
             if (res) return res;
-            match.begin2 = lexicalCast<unsigned>(buffer);
+            match.begin2 = lexicalCast<unsigned>(buffer) -1;
 
             // skip ','
             skipChar(reader, ',');
@@ -191,9 +191,9 @@ readRecord(TReader & reader, TMatch & match, Gff) {
         }
         else if (buffer == "length" && !found_seq2Range)
         {
-            match.begin2 = 0;
+            match.begin2 = 1;
 
-            // read end position 2
+            // length
             clear(buffer);
             res = readDigits(buffer, reader);
             if (res) return res;
