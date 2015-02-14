@@ -56,7 +56,7 @@
 // ----------------------------------------------------------------------------
 
 template <typename TStr, typename TShape>
-bool _createAndCompareSAs(TStr const & text,
+void _createAndCompareSAs(TStr const & text,
                      TShape const & shape)
 {
     String<unsigned> sa1, sa2;
@@ -66,24 +66,21 @@ bool _createAndCompareSAs(TStr const & text,
     clear(sa2);
     resize(sa2, length(text));
     createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), DislexExternal<TShape>());
-    if (sa1 != sa2) return false;
+    SEQAN_ASSERT_EQ(sa1, sa2);
     
     clear(sa2);
     resize(sa2, length(text));
     createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), InplaceRadixSort());
-    if (sa1 != sa2) return false;
+    SEQAN_ASSERT_EQ(sa1, sa2);
     
     clear(sa2);
     resize(sa2, length(text));
     createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), Dislex<Skew7>());
-    if (sa1 != sa2) return false;
-    
-    return true;
-
+    SEQAN_ASSERT_EQ(sa1, sa2);
 }
 
 template <typename TStr, typename TSetSpec, typename TShape>
-bool _createAndCompareSAs(StringSet<TStr, TSetSpec> const & text,
+void _createAndCompareSAs(StringSet<TStr, TSetSpec> const & text,
                           TShape const & shape)
 {
     String<Pair<unsigned, unsigned> > sa1, sa2;
@@ -93,19 +90,17 @@ bool _createAndCompareSAs(StringSet<TStr, TSetSpec> const & text,
     clear(sa2);
     resize(sa2, lengthSum(text));
     createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), DislexExternal<TShape>());
-    if (sa1 != sa2) return false;
+    SEQAN_ASSERT_EQ(sa1, sa2);
     
     clear(sa2);
     resize(sa2, lengthSum(text));
     createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), InplaceRadixSort());
-    if (sa1 != sa2) return false;
+    SEQAN_ASSERT_EQ(sa1, sa2);
     
     clear(sa2);
     resize(sa2, lengthSum(text));
     createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), Dislex<>());
-    if (sa1 != sa2) return false;
-
-    return true;
+    SEQAN_ASSERT_EQ(sa1, sa2);
 }
 
 
@@ -139,12 +134,12 @@ SEQAN_DEFINE_TEST(test_gappedIndex_construction_str)
         //___create_suffix_array______________________________________________________
         TestGappedIndexShapeDefs_ SD;
         
-        if ( !_createAndCompareSAs(text, SD.S_10) )      std::cout << "SAs differ!!" << std::endl;
-        if ( !_createAndCompareSAs(text, SD.S_11010) )   std::cout << "SAs differ!!" << std::endl;
-        if ( !_createAndCompareSAs(text, SD.S_111100) )  std::cout << "SAs differ!!" << std::endl;
-        if ( !_createAndCompareSAs(text, SD.S_10001) )   std::cout << "SAs differ!!" << std::endl;
-        if ( !_createAndCompareSAs(text, SD.S_01) )      std::cout << "SAs differ!!" << std::endl;
-        if ( !_createAndCompareSAs(text, SD.S_0011) )    std::cout << "SAs differ!!" << std::endl;
+        _createAndCompareSAs(text, SD.S_10);
+        _createAndCompareSAs(text, SD.S_11010);
+        _createAndCompareSAs(text, SD.S_111100);
+        _createAndCompareSAs(text, SD.S_10001);
+        _createAndCompareSAs(text, SD.S_01);
+        _createAndCompareSAs(text, SD.S_0011);
     }
         
 }
@@ -187,15 +182,15 @@ SEQAN_DEFINE_TEST(test_gappedIndex_construction_strSet)
         std::cout << "   totalSize: " << totalSize << "\tsetSize: " << length(text) << std::endl;
         
         
-        //___create_suffix_array______________________________________________________
+        // create suffix array
         TestGappedIndexShapeDefs_ SD;
         
-        if ( !_createAndCompareSAs(text, SD.S_10) )      std::cout << "SAs differ!!" << std::endl;
-        if ( !_createAndCompareSAs(text, SD.S_11010) )   std::cout << "SAs differ!!" << std::endl;
-        if ( !_createAndCompareSAs(text, SD.S_111100) )  std::cout << "SAs differ!!" << std::endl;
-        if ( !_createAndCompareSAs(text, SD.S_10001) )   std::cout << "SAs differ!!" << std::endl;
-        if ( !_createAndCompareSAs(text, SD.S_01) )      std::cout << "SAs differ!!" << std::endl;
-        if ( !_createAndCompareSAs(text, SD.S_0011) )    std::cout << "SAs differ!!" << std::endl;
+        _createAndCompareSAs(text, SD.S_10);
+        _createAndCompareSAs(text, SD.S_11010);
+        _createAndCompareSAs(text, SD.S_111100);
+        _createAndCompareSAs(text, SD.S_10001);
+        _createAndCompareSAs(text, SD.S_01);
+        _createAndCompareSAs(text, SD.S_0011);
     }
     
 }
