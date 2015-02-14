@@ -68,15 +68,15 @@ bool _createAndCompareSAs(TStr const & text,
     createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), DislexExternal<TShape>());
     if (sa1 != sa2) return false;
     
-//    clear(sa2);
-//    resize(sa2, length(text));
-//    createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), InplaceRadixSort());
-//    if (sa1 != sa2) return false;
-//    
-//    clear(sa2);
-//    resize(sa2, length(text));
-//    createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), Dislex<Skew7>());
-//    if (sa1 != sa2) return false;
+    clear(sa2);
+    resize(sa2, length(text));
+    createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), InplaceRadixSort());
+    if (sa1 != sa2) return false;
+    
+    clear(sa2);
+    resize(sa2, length(text));
+    createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), Dislex<Skew7>());
+    if (sa1 != sa2) return false;
     
     return true;
 
@@ -95,15 +95,15 @@ bool _createAndCompareSAs(StringSet<TStr, TSetSpec> const & text,
     createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), DislexExternal<TShape>());
     if (sa1 != sa2) return false;
     
-//    clear(sa2);
-//    resize(sa2, lengthSum(text));
-//    createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), InplaceRadixSort());
-//    if (sa1 != sa2) return false;
-//    
-//    clear(sa2);
-//    resize(sa2, lengthSum(text));
-//    createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), Dislex<>());
-//    if (sa1 != sa2) return false;
+    clear(sa2);
+    resize(sa2, lengthSum(text));
+    createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), InplaceRadixSort());
+    if (sa1 != sa2) return false;
+    
+    clear(sa2);
+    resize(sa2, lengthSum(text));
+    createGappedSuffixArray(sa2, text, shape, ModCyclicShape<TShape>(), Dislex<>());
+    if (sa1 != sa2) return false;
 
     return true;
 }

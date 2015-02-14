@@ -32,7 +32,9 @@ add_definitions (${SEQAN_DEFINITIONS})
 add_executable (test_gappedIndex
                 test_gappedIndex.cpp
                 test_gappedIndex.h
-                test_gappedIndex_construction.h)
+                test_gappedIndex_find.h
+		test_gappedIndex_stree.h
+		test_gappedIndex_construction.h)
 
 # Add dependencies found by find_package (SeqAn).
 target_link_libraries (test_gappedIndex ${SEQAN_LIBRARIES})

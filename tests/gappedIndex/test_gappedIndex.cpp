@@ -37,8 +37,8 @@
 
 #include "../index/test_index_helpers.h"
 #include "test_gappedIndex.h"
-//#include "test_gappedIndex_find.h"
-//#include "test_gappedIndex_stree.h"
+#include "test_gappedIndex_find.h"
+#include "test_gappedIndex_stree.h"
 #include "test_gappedIndex_construction.h"
 
 
@@ -47,5 +47,71 @@ SEQAN_BEGIN_TESTSUITE(test_gappedIndex)
     // Construction
     SEQAN_CALL_TEST(test_gappedIndex_construction_str);
     SEQAN_CALL_TEST(test_gappedIndex_construction_strSet);
+    
+    
+    
+    // S-tree traversal
+    SEQAN_CALL_TEST(test_gappedIndex_top_down_traversal);
+
+    
+    // Finder
+	SEQAN_CALL_TEST(test_gappedIndex_find_10_DnaString);
+    SEQAN_CALL_TEST(test_gappedIndex_find_10_DnaString_Set);
+	SEQAN_CALL_TEST(test_gappedIndex_find_10_Dna5String);
+	SEQAN_CALL_TEST(test_gappedIndex_find_10_Dna5String_Set);
+    SEQAN_CALL_TEST(test_gappedIndex_find_10_Peptide);
+    SEQAN_CALL_TEST(test_gappedIndex_find_10_Peptide_Set);
+	SEQAN_CALL_TEST(test_gappedIndex_find_10_CharString);
+	SEQAN_CALL_TEST(test_gappedIndex_find_10_CharString_Set);
+
+    //special
+	SEQAN_CALL_TEST(test_gappedIndex_find_10_Finite);
+	SEQAN_CALL_TEST(test_gappedIndex_find_10_Finite_Set);
+
+	SEQAN_CALL_TEST(test_gappedIndex_find_11010_DnaString);
+    SEQAN_CALL_TEST(test_gappedIndex_find_11010_DnaString_Set);
+	SEQAN_CALL_TEST(test_gappedIndex_find_11010_Dna5String);
+	SEQAN_CALL_TEST(test_gappedIndex_find_11010_Dna5String_Set);
+    SEQAN_CALL_TEST(test_gappedIndex_find_11010_Peptide);
+    SEQAN_CALL_TEST(test_gappedIndex_find_11010_Peptide_Set);
+	SEQAN_CALL_TEST(test_gappedIndex_find_11010_CharString);
+	SEQAN_CALL_TEST(test_gappedIndex_find_11010_CharString_Set);
+
+	SEQAN_CALL_TEST(test_gappedIndex_find_111100_DnaString);
+    SEQAN_CALL_TEST(test_gappedIndex_find_111100_DnaString_Set);
+	SEQAN_CALL_TEST(test_gappedIndex_find_111100_Dna5String);
+	SEQAN_CALL_TEST(test_gappedIndex_find_111100_Dna5String_Set);
+    SEQAN_CALL_TEST(test_gappedIndex_find_111100_Peptide);
+    SEQAN_CALL_TEST(test_gappedIndex_find_111100_Peptide_Set);
+	SEQAN_CALL_TEST(test_gappedIndex_find_111100_CharString);
+	SEQAN_CALL_TEST(test_gappedIndex_find_111100_CharString_Set);
+
+	SEQAN_CALL_TEST(test_gappedIndex_find_10001_DnaString);
+    SEQAN_CALL_TEST(test_gappedIndex_find_10001_DnaString_Set);
+	SEQAN_CALL_TEST(test_gappedIndex_find_10001_Dna5String);
+	SEQAN_CALL_TEST(test_gappedIndex_find_10001_Dna5String_Set);
+    SEQAN_CALL_TEST(test_gappedIndex_find_10001_Peptide);
+    SEQAN_CALL_TEST(test_gappedIndex_find_10001_Peptide_Set);
+	SEQAN_CALL_TEST(test_gappedIndex_find_10001_CharString);
+	SEQAN_CALL_TEST(test_gappedIndex_find_10001_CharString_Set);
+
+    SEQAN_CALL_TEST(test_gappedIndex_find_01_DnaString);
+    SEQAN_CALL_TEST(test_gappedIndex_find_01_DnaString_Set);
+	SEQAN_CALL_TEST(test_gappedIndex_find_01_Dna5String);
+	SEQAN_CALL_TEST(test_gappedIndex_find_01_Dna5String_Set);
+    SEQAN_CALL_TEST(test_gappedIndex_find_01_Peptide);
+    SEQAN_CALL_TEST(test_gappedIndex_find_01_Peptide_Set);
+	SEQAN_CALL_TEST(test_gappedIndex_find_01_CharString);
+	SEQAN_CALL_TEST(test_gappedIndex_find_01_CharString_Set);
+
+    SEQAN_CALL_TEST(test_gappedIndex_find_0011_DnaString);
+    SEQAN_CALL_TEST(test_gappedIndex_find_0011_DnaString_Set);
+	SEQAN_CALL_TEST(test_gappedIndex_find_0011_Dna5String);
+	SEQAN_CALL_TEST(test_gappedIndex_find_0011_Dna5String_Set);
+    SEQAN_CALL_TEST(test_gappedIndex_find_0011_Peptide);
+    SEQAN_CALL_TEST(test_gappedIndex_find_0011_Peptide_Set);
+	SEQAN_CALL_TEST(test_gappedIndex_find_0011_CharString);
+	SEQAN_CALL_TEST(test_gappedIndex_find_0011_CharString_Set);
+
 }
 SEQAN_END_TESTSUITE
