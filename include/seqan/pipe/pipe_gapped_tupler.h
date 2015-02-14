@@ -154,7 +154,9 @@ struct Pipe< TInput, GappedTupler<TShape, omitLast, TPack> >
             ++buffIndex;
             if (buffIndex >= BufferSize)
                 buffIndex = 0;
-        } else {
+        }
+        else
+        {
             buffer[buffIndex] = *in;
             ++in;
             ++buffIndex;
@@ -258,7 +260,9 @@ struct Pipe< TInput, Multi<GappedTupler<TShape, omitLast, TPack>, TPair, TLimits
             ++buffIndex;
             if (buffIndex >= BufferSize)
                 buffIndex = 0;
-        } else {
+        }
+        else
+        {
             buffer[buffIndex] = *in;
             ++localPos;
             ++in;
@@ -477,7 +481,8 @@ struct Pipe< TInput, Multi<GappedTupler<TShape, omitLast, TPack>, TPair, TLimits
         if (lastTuples < TuplerNumberOfLastTuples_<BufferSize, omitLast>::VALUE)
         {
             buffer[BufferSize - 1] = TValue();
-        } else {
+        } else
+        {
             buffer[BufferSize - 1] = *in;
             ++localPos;
             ++in;
