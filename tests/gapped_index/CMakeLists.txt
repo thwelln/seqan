@@ -46,4 +46,4 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN_CXX_FLAGS}")
 # Register with CTest
 # ----------------------------------------------------------------------------
 
-add_test (NAME test_test_gappedIndex COMMAND $<TARGET_FILE:test_gappe_index>)
+add_test (NAME test_test_gappedIndex COMMAND $<TARGET_FILE:test_gapped_index>)
