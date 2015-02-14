@@ -137,6 +137,7 @@ struct RadixTextAccessor<TSAValue, TString, ModCyclicShape<CyclicShape<TShape> >
     template <typename TSize2>
     inline TSize operator()(TSAValue const &x, TSize2 depth) const
     {
+        // TODO(meiers): Why not use modulo ???
         typename Size<TString>::Type shapePos = depth - depth/w * w; // modulo
         typename Size<TString>::Type pos = x + depth/w * s + positions[ shapePos ];
         if (pos >= L) return 0;
