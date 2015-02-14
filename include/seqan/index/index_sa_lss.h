@@ -366,25 +366,24 @@ struct ContextLss_
     //
     // better use LarssonSadakane as a pipe (look down)
 
-    template < typename TSA,
-               typename TText >
-    void createSuffixArray(
-		TSA &SA,
-		TText const &s,
-		LarssonSadakane const &,
-		unsigned K,
-        unsigned)
-	{
-		typedef typename Value<TSA>::Type			TValue;
-		typedef typename MakeSigned_<TValue>::Type	TSValue;	// LarssonSadakane expects signed values
-		ContextLss_<TSValue> c;
-		c.suffixsort(
-			(TSValue*)begin(s, Standard()),		// text
-			(TSValue*)begin(SA, Standard()),	// SA
-			length(s) - 1,						// n
-			K,									// text[i] <  K
-			0);									// text[i] >= 0
-	}
+    template <typename TSA, typename TText >
+    void
+    createSuffixArray(TSA &SA,
+                      TText const &s,
+                      LarssonSadakane const &,
+                      unsigned K,
+                      unsigned notused = 0)
+    {
+        typedef typename Value<TSA>::Type             TValue;
+        // LarssonSadakane expects signed values
+        typedef typename MakeSigned_<TValue>::Type    TSValue;
+        ContextLss_<TSValue> c;
+        c.suffixsort((TSValue*)begin(s, Standard()),      // text
+                     (TSValue*)begin(SA, Standard()),     // SA
+                     length(s) - 1,                       // n
+                     K,                                   // text[i] <  K
+                     0);                                  // text[i] >= 0
+    }
 
     //////////////////////////////////////////////////////////////////////////////
     // qsufsort pipe
@@ -421,7 +420,7 @@ struct ContextLss_
             endRead(_textIn);
 
             resize(sa, len + 1, Exact());
-            createSuffixArray(sa, text, LarssonSadakane(), maxChar + 1);
+            createSuffixArray(sa, text, LarssonSadakane(), maxChar + 1, 0);
         }
 
         inline typename Value<TSource>::Type const & operator*() {

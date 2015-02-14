@@ -177,6 +177,17 @@
 #include <seqan/index/repeat_base.h>
 
 // ----------------------------------------------------------------------------
+// Gapped index (meiers)
+// ----------------------------------------------------------------------------
+
+#include <seqan/modifier/cyclic_shape.h>
+#include <seqan/index/radix_inplace.h>
+#include <seqan/index/index_sa_radixSort.h>
+#include <seqan/index/index_gapped_dislex.h>
+#include <seqan/index/index_gapped_dislex_external.h>
+#include <seqan/index/index_gapped_sa.h>
+
+// ----------------------------------------------------------------------------
 // Pizza & Chili interface (compressed indices).
 // ----------------------------------------------------------------------------
 
@@ -227,17 +238,6 @@
 #include <seqan/index/find2_vstree_factory.h>
 #include <seqan/index/find2_index_multi.h>
 #include <seqan/index/find2_functors.h>
-
-// ----------------------------------------------------------------------------
-// Gapped index (meiers)
-// ----------------------------------------------------------------------------
-
-#include <seqan/modifier/cyclic_shape.h>
-#include <seqan/index/radix_inplace.h>
-#include <seqan/index/index_sa_radixSort.h>
-#include <seqan/index/index_gapped_dislex.h>
-#include <seqan/index/index_gapped_dislex_external.h>
-#include <seqan/index/index_gapped_sa.h>
 
 // ----------------------------------------------------------------------------
 // Lambda interface.

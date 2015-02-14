@@ -462,7 +462,7 @@ struct Pipe<TInput, DislexExternal<TShape, TSACA> >
     typedef Pipe< TPoolMapper, Filter<
             filterI2<TypeOf_(TPoolMapper)> > >                  TPipeFilterI2;
     typedef Pipe<TPipeFilterI2, TSACA>                          TPipeSACA;
-    typedef _dislexReverseTransform<TypeOf_(TPipeSACA),
+    typedef DislexReverseTransform_<TypeOf_(TPipeSACA),
             TypeOf_(Pipe)>                                      TDislexReverse;
     typedef Pipe<TPipeSACA, Filter<TDislexReverse> >            TPipeReverseTransform;
 
@@ -563,7 +563,7 @@ struct Pipe<TInput, Multi<DislexExternal<TShape, TSACA>, TPair, TLimits> >
     typedef Pipe< TPoolMapper, Filter<
             filterI2<TypeOf_(TPoolMapper)> > >                  TPipeFilterI2;
     typedef Pipe<TPipeFilterI2, TSACA>                          TPipeSACA;
-    typedef _dislexReverseTransformMulti<TypeOf_(TPipeSACA),
+    typedef DislexReverseTransformMulti_<TypeOf_(TPipeSACA),
             TLimits, TypeOf_(Pipe)>                             TDislexReverse;
     typedef Pipe<TPipeSACA, Filter<TDislexReverse> >            TPipeReverseTransform;
 

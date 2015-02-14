@@ -177,6 +177,35 @@ struct DefaultFinder< Index<TText, IndexSa<TIndexSpec> > >
 };
 
 
+template <typename TText, typename TSAValue>
+struct SuffixFunctor :
+    std::unary_function<TSAValue, typename Suffix<TText const>::Type>
+{
+    TText const &text;
+    
+    SuffixFunctor(TText const &text) :
+    text(text)
+    {}
+    
+    typename SuffixFunctor::result_type
+    operator() (TSAValue const &pos) const
+    {
+        return suffix(text, pos);
+    }
+};
+
+// Overload of SuffixFunctor for Gapped Index
+template <typename TText, typename TSpec, typename TSAValue>
+struct SuffixFunctor <Index<TText, TSpec>, TSAValue> :
+    public SuffixFunctor<typename Fibre<Index<TText, TSpec>, FibreText>::Type, TSAValue>
+{
+    typedef SuffixFunctor<typename Fibre<Index<TText, TSpec>, FibreText>::Type, TSAValue> TBaseClass;
+
+    SuffixFunctor(Index<TText, TSpec> const &index) :
+        TBaseClass(indexText(index))
+    {}
+};
+
 // ============================================================================
 // Functions
 // ============================================================================

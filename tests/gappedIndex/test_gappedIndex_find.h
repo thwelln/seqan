@@ -164,56 +164,56 @@ void call_testFinder(StringSet<TText, TSpec> &text, TShape const & shape, bool v
 
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10_DnaString)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     DnaString str;
     call_testFinder(str, SD.S_10);
     call_testFinder(str, SD.s_10);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10_Dna5String)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     Dna5String str;
     call_testFinder(str, SD.S_10);
     call_testFinder(str, SD.s_10);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10_Peptide)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     Peptide str;
     call_testFinder(str, SD.S_10);
     call_testFinder(str, SD.s_10);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10_CharString)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     CharString str;
     call_testFinder(str, SD.S_10);
     call_testFinder(str, SD.s_10);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10_DnaString_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<DnaString> str;
     call_testFinder(str, SD.S_10);
     call_testFinder(str, SD.s_10);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10_Dna5String_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<Dna5String> str;
     call_testFinder(str, SD.S_10);
     call_testFinder(str, SD.s_10);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10_Peptide_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<Peptide> str;
     call_testFinder(str, SD.S_10);
     call_testFinder(str, SD.s_10);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10_CharString_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<CharString> str;
     call_testFinder(str, SD.S_10);
     call_testFinder(str, SD.s_10);
@@ -223,14 +223,14 @@ SEQAN_DEFINE_TEST(test_gappedIndex_find_10_CharString_Set)
 // special
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10_Finite)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     String<SimpleType<unsigned, Finite<256> > > str;
     call_testFinder(str, SD.S_10);
     call_testFinder(str, SD.s_10);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10_Finite_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<String<SimpleType<unsigned, Finite<256> > > > str;
     call_testFinder(str, SD.S_10);
     call_testFinder(str, SD.s_10);
@@ -242,56 +242,56 @@ SEQAN_DEFINE_TEST(test_gappedIndex_find_10_Finite_Set)
 
 SEQAN_DEFINE_TEST(test_gappedIndex_find_11010_DnaString)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     DnaString str;
     call_testFinder(str, SD.S_11010);
     call_testFinder(str, SD.s_11010);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_11010_Dna5String)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     Dna5String str;
     call_testFinder(str, SD.S_11010);
     call_testFinder(str, SD.s_11010);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_11010_Peptide)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     Peptide str;
     call_testFinder(str, SD.S_11010);
     call_testFinder(str, SD.s_11010);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_11010_CharString)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     CharString str;
     call_testFinder(str, SD.S_11010);
     call_testFinder(str, SD.s_11010);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_11010_DnaString_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<DnaString> str;
     call_testFinder(str, SD.S_11010);
     call_testFinder(str, SD.s_11010);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_11010_Dna5String_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<Dna5String> str;
     call_testFinder(str, SD.S_11010);
     call_testFinder(str, SD.s_11010);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_11010_Peptide_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<Peptide> str;
     call_testFinder(str, SD.S_11010);
     call_testFinder(str, SD.s_11010);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_11010_CharString_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<CharString> str;
     call_testFinder(str, SD.S_11010);
     call_testFinder(str, SD.s_11010);
@@ -303,56 +303,56 @@ SEQAN_DEFINE_TEST(test_gappedIndex_find_11010_CharString_Set)
 
 SEQAN_DEFINE_TEST(test_gappedIndex_find_111100_DnaString)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     DnaString str;
     call_testFinder(str, SD.S_111100);
     call_testFinder(str, SD.s_111100);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_111100_Dna5String)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     Dna5String str;
     call_testFinder(str, SD.S_111100);
     call_testFinder(str, SD.s_111100);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_111100_Peptide)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     Peptide str;
     call_testFinder(str, SD.S_111100);
     call_testFinder(str, SD.s_111100);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_111100_CharString)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     CharString str;
     call_testFinder(str, SD.S_111100);
     call_testFinder(str, SD.s_111100);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_111100_DnaString_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<DnaString> str;
     call_testFinder(str, SD.S_111100);
     call_testFinder(str, SD.s_111100);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_111100_Dna5String_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<Dna5String> str;
     call_testFinder(str, SD.S_111100);
     call_testFinder(str, SD.s_111100);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_111100_Peptide_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<Peptide> str;
     call_testFinder(str, SD.S_111100);
     call_testFinder(str, SD.s_111100);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_111100_CharString_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<CharString> str;
     call_testFinder(str, SD.S_111100);
     call_testFinder(str, SD.s_111100);
@@ -364,56 +364,56 @@ SEQAN_DEFINE_TEST(test_gappedIndex_find_111100_CharString_Set)
 
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10001_DnaString)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     DnaString str;
     call_testFinder(str, SD.S_10001);
     call_testFinder(str, SD.s_10001);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10001_Dna5String)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     Dna5String str;
     call_testFinder(str, SD.S_10001);
     call_testFinder(str, SD.s_10001);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10001_Peptide)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     Peptide str;
     call_testFinder(str, SD.S_10001);
     call_testFinder(str, SD.s_10001);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10001_CharString)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     CharString str;
     call_testFinder(str, SD.S_10001);
     call_testFinder(str, SD.s_10001);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10001_DnaString_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<DnaString> str;
     call_testFinder(str, SD.S_10001);
     call_testFinder(str, SD.s_10001);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10001_Dna5String_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<Dna5String> str;
     call_testFinder(str, SD.S_10001);
     call_testFinder(str, SD.s_10001);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10001_Peptide_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<Peptide> str;
     call_testFinder(str, SD.S_10001);
     call_testFinder(str, SD.s_10001);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_10001_CharString_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<CharString> str;
     call_testFinder(str, SD.S_10001);
     call_testFinder(str, SD.s_10001);
@@ -424,56 +424,56 @@ SEQAN_DEFINE_TEST(test_gappedIndex_find_10001_CharString_Set)
 
 SEQAN_DEFINE_TEST(test_gappedIndex_find_01_DnaString)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     DnaString str;
     call_testFinder(str, SD.S_01);
     call_testFinder(str, SD.s_01);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_01_Dna5String)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     Dna5String str;
     call_testFinder(str, SD.S_01);
     call_testFinder(str, SD.s_01);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_01_Peptide)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     Peptide str;
     call_testFinder(str, SD.S_01);
     call_testFinder(str, SD.s_01);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_01_CharString)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     CharString str;
     call_testFinder(str, SD.S_01);
     call_testFinder(str, SD.s_01);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_01_DnaString_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<DnaString> str;
     call_testFinder(str, SD.S_01);
     call_testFinder(str, SD.s_01);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_01_Dna5String_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<Dna5String> str;
     call_testFinder(str, SD.S_01);
     call_testFinder(str, SD.s_01);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_01_Peptide_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<Peptide> str;
     call_testFinder(str, SD.S_01);
     call_testFinder(str, SD.s_01);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_01_CharString_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<CharString> str;
     call_testFinder(str, SD.S_01);
     call_testFinder(str, SD.s_01);
@@ -485,56 +485,56 @@ SEQAN_DEFINE_TEST(test_gappedIndex_find_01_CharString_Set)
 
 SEQAN_DEFINE_TEST(test_gappedIndex_find_0011_DnaString)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     DnaString str;
     call_testFinder(str, SD.S_0011);
     call_testFinder(str, SD.s_0011);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_0011_Dna5String)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     Dna5String str;
     call_testFinder(str, SD.S_0011);
     call_testFinder(str, SD.s_0011);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_0011_Peptide)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     Peptide str;
     call_testFinder(str, SD.S_0011);
     call_testFinder(str, SD.s_0011);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_0011_CharString)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     CharString str;
     call_testFinder(str, SD.S_0011);
     call_testFinder(str, SD.s_0011);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_0011_DnaString_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<DnaString> str;
     call_testFinder(str, SD.S_0011);
     call_testFinder(str, SD.s_0011);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_0011_Dna5String_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<Dna5String> str;
     call_testFinder(str, SD.S_0011);
     call_testFinder(str, SD.s_0011);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_0011_Peptide_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<Peptide> str;
     call_testFinder(str, SD.S_0011);
     call_testFinder(str, SD.s_0011);
 }
 SEQAN_DEFINE_TEST(test_gappedIndex_find_0011_CharString_Set)
 {
-    _ShapeDefs SD;
+    TestGappedIndexShapeDefs_ SD;
     StringSet<CharString> str;
     call_testFinder(str, SD.S_0011);
     call_testFinder(str, SD.s_0011);

@@ -55,33 +55,6 @@ namespace SEQAN_NAMESPACE_MAIN
 	// class to return a suffix given a suffix start position
     //
 
-    template <typename TText, typename TSAValue>
-    struct SuffixFunctor :
-        std::unary_function<TSAValue, typename Suffix<TText const>::Type>
-    {
-        TText const &text;
-
-        SuffixFunctor(TText const &text) :
-        text(text)
-        {}
-
-        typename SuffixFunctor::result_type
-        operator() (TSAValue const &pos) const
-        {
-            return suffix(text, pos);
-        }
-    };
-
-    template <typename TText, typename TSpec, typename TSAValue>
-    struct SuffixFunctor <Index<TText, TSpec>, TSAValue> :
-        public SuffixFunctor<typename Fibre<Index<TText, TSpec>, FibreText>::Type, TSAValue>
-    {
-        typedef SuffixFunctor<typename Fibre<Index<TText, TSpec>, FibreText>::Type, TSAValue> TBaseClass;
-
-        SuffixFunctor(Index<TText, TSpec> const &index) : TBaseClass(indexText(index))
-        {}
-    };
-
 
 	//////////////////////////////////////////////////////////////////////////////
 	// class to access a flat search tree like a real tree

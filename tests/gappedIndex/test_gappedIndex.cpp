@@ -47,9 +47,8 @@ SEQAN_BEGIN_TESTSUITE(test_gappedIndex)
     // Construction
     SEQAN_CALL_TEST(test_gappedIndex_construction_str);
     SEQAN_CALL_TEST(test_gappedIndex_construction_strSet);
-    
-    
-    
+    /*
+
     // S-tree traversal
     SEQAN_CALL_TEST(test_gappedIndex_top_down_traversal);
 
@@ -112,6 +111,6 @@ SEQAN_BEGIN_TESTSUITE(test_gappedIndex)
     SEQAN_CALL_TEST(test_gappedIndex_find_0011_Peptide_Set);
 	SEQAN_CALL_TEST(test_gappedIndex_find_0011_CharString);
 	SEQAN_CALL_TEST(test_gappedIndex_find_0011_CharString_Set);
-
+*/
 }
 SEQAN_END_TESTSUITE
