@@ -37,7 +37,7 @@ add_executable (test_gapped_index
 		test_gapped_index_construction.h)
 
 # Add dependencies found by find_package (SeqAn).
-target_link_libraries (test_gappedIndex ${SEQAN_LIBRARIES})
+target_link_libraries (test_gapped_index ${SEQAN_LIBRARIES})
 
 # Add CXX flags found by find_package (SeqAn).
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN_CXX_FLAGS}")
@@ -46,4 +46,4 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN_CXX_FLAGS}")
 # Register with CTest
 # ----------------------------------------------------------------------------
 
-add_test (NAME test_test_gappedIndex COMMAND $<TARGET_FILE:test_gappedIndex>)
+add_test (NAME test_test_gappedIndex COMMAND $<TARGET_FILE:test_gappe_index>)
