@@ -35,7 +35,7 @@
 // by Birte Kehr, others might be taken from Martin Friths LAST code
 // (last.cbrc.jp).
 
-#include <seqan/sequence.h>
+#include <seqan/seq_io.h>
 #include <seqan/arg_parse.h>
 #include <seqan/index.h>
 #include <seqan/seeds.h>
@@ -230,6 +230,8 @@ int _lastDbChoice1(TSeqSet const &databases, TIdSet const &ids, SeqanLastDbOptio
     {
         case 1: return _lastDbChoice2(databases, ids, options, Shape1());
         case 2: return _lastDbChoice2(databases, ids, options, Shape2());
+        case 3: return _lastDbChoice2(databases, ids, options, Shape3());
+        case 4: return _lastDbChoice2(databases, ids, options, Shape4());
         default:
             std::cout << "No valid shape chosen. Exit" << std::endl;
             return 1;
@@ -256,16 +258,16 @@ int main(int argc, char const ** argv)
     addDescription(parser, "Choose OUTPUT NAME carefully, as many files can be generated. "
                            "We recommend to use a subfolder for them.");
     addDescription(parser, "Note: Only Dna5 supported! Only up to 255 sequences (e.g. chromosomes) in database file allowed");
-    addArgument(parser, ArgParseArgument(ArgParseArgument::INPUTFILE, "FASTA FILE"));
+    addArgument(parser, ArgParseArgument(ArgParseArgument::INPUT_FILE, "FASTA FILE"));
     setValidValues(parser, 0, "fa fasta");
-    addArgument(parser, ArgParseArgument(ArgParseArgument::OUTPUTFILE, "OUTPUT NAME"));
+    addArgument(parser, ArgParseArgument(ArgParseArgument::OUTPUT_FILE, "OUTPUT NAME"));
     addOption(parser, ArgParseOption("v", "verbose", "Set verbosity mode."));
     addOption(parser, ArgParseOption("V", "very-verbose", "Set stronger verbosity mode."));
     addOption(parser, ArgParseOption("Q", "quiet", "No output, please."));
     addOption(parser, ArgParseOption("s", "shape", "shape used for the suffix array", ArgParseArgument::INTEGER));
-    setDefaultValue(parser, "s", "1");
-    setMinValue(parser, "s", "0");
-    setMaxValue(parser, "s", "2");
+    setDefaultValue(parser, "s", "4");
+    setMinValue(parser, "s", "1");
+    setMaxValue(parser, "s", "4");
     addOption(parser, ArgParseOption("k", "k-mer", "k-mer size used in the hash table.", ArgParseArgument::INTEGER));
     setDefaultValue(parser, "k", "8");
     setMinValue(parser, "k", "2");

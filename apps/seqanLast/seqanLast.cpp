@@ -36,7 +36,8 @@
 // (last.cbrc.jp).
 
 #include <cstdlib>
-#include <seqan/sequence.h>
+#include <seqan/file.h>
+#include <seqan/seq_io.h>
 #include <seqan/arg_parse.h>
 #include <seqan/index.h>
 #include <seqan/seeds.h>
@@ -112,28 +113,55 @@ int importAndRun(SeqanLastOptions &options,
         return 1;
 
 
-    // Prepare Parameter
-    Score<int, Simple> scoreMatrix(options.matchScore, options.mismatchScore, options.gapExtendScore,
+
+    // Prepare LastParameters
+
+
+    // Old Score:
+    Score<int, Simple> oldScore(options.matchScore, options.mismatchScore, options.gapExtendScore,
                                    options.gapExtendScore + options.gapOpenScore);
     LastParameters<unsigned, Score<int, Simple> > params(options.frequency,
-                                                         scoreMatrix,
+                                                         oldScore,
                                                          options.gaplessXDrop,
                                                          options.gappedXDrop,
                                                          options.gaplessThreshold,
                                                          options.gappedThreshold,
-                                                         true,                  // only ungapped
+                                                         options.onlyUngappedAlignments,
+                                                         options.useHashTable,
+                                                         options.myUngappedExtend,
                                                          options.verbosity);
+
+    // New Score:
+    Score<int, ScoreMatrix<Dna5> > newScore(options.gapExtendScore, options.gapExtendScore + options.gapOpenScore);
+    setDefaultScoreMatrix(newScore, Default(), options.matchScore, options.mismatchScore);
+    LastParameters<unsigned, Score<int, ScoreMatrix<Dna5> > > paramsNew( options.frequency,
+                                                                         newScore,
+                                                                         options.gaplessXDrop,
+                                                                         options.gappedXDrop,
+                                                                         options.gaplessThreshold,
+                                                                         options.gappedThreshold,
+                                                                         options.onlyUngappedAlignments,
+                                                                         options.useHashTable,
+                                                                         options.myUngappedExtend,
+                                                                         options.verbosity);
 
     // Do the main work: alignments
     if (options.verbosity) std::cout << "Start searching..." << std::endl;
     String<TMatch> matchContainer;
-    linearLastal(matchContainer, suffixArray, hashTab, querySet, params);
-
     double teim = sysTime();
-    MatchScoreLess<TMatch> scoreLess;
-    std::sort(begin(matchContainer, Standard()), end(matchContainer, Standard()), scoreLess);
-    std::cout << "Sorting results " << sysTime() - teim << std::endl;
+    if (options.newScoring)
+        linearLastal(matchContainer, suffixArray, hashTab, querySet, paramsNew);
+    else
+        linearLastal(matchContainer, suffixArray, hashTab, querySet, params);
 
+    if (options.verbosity) std::cout << "Time spend in linearLastal: " << sysTime() - teim << std::endl;
+
+    // TODO: If the sorting takes long, cosider only sorting a string of references instead of the heavy match objects
+    teim = sysTime();
+    MatchScoreLess<TMatch> scoreLess;
+
+    std::sort(begin(matchContainer, Standard()), end(matchContainer, Standard()), scoreLess);
+    if (options.verbosity) std::cout << "Sorting results " << sysTime() - teim << std::endl;
 
     // Output
     teim = sysTime();
@@ -144,13 +172,15 @@ int importAndRun(SeqanLastOptions &options,
             std::cout << "Could not open \"" << options.outputFile << "\" to write output. Using stdout instead." << std::endl;
         std::cout << "================================================================================" << std::endl;
         _outputMatches(matchContainer, dbIds, queryIds, std::cout, options.verbosity);
-	} else {
-        std::cout << "Writing output to " << options.outputFile << "..." << std::endl;
+	}
+    else
+    {
+        if (options.verbosity) std::cout << "Writing output to " << options.outputFile << "..." << std::endl;
         _outputMatches(matchContainer, dbIds, queryIds, file, options.verbosity);
     }
     file.close();
 
-    std::cout << "Wrting took: "<< sysTime() - teim << std::endl;
+    if (options.verbosity) std::cout << "Wrting took: "<< sysTime() - teim << std::endl;
     return 0;
 }
 
@@ -189,6 +219,8 @@ int _lastChoice1(SeqanLastOptions &options)
     {
         case 1: return _lastChoice2(options, Shape1() );
         case 2: return _lastChoice2(options, Shape2() );
+        case 3: return _lastChoice2(options, Shape3() );
+        case 4: return _lastChoice2(options, Shape4() );
         default:
             std::cout << "No valid shape chosen. Exit" << std::endl;
             return 1;

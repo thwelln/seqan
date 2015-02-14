@@ -57,6 +57,11 @@ struct SeqanLastOptions
     int gaplessThreshold;
     int gappedThreshold;
 
+    bool onlyUngappedAlignments;
+    bool useHashTable;
+    bool myUngappedExtend;
+    bool newScoring;
+
     CharString databaseName;
     CharString queryFile;
     CharString outputFile;
@@ -71,9 +76,10 @@ struct SeqanLastOptions
     void print() // TODO(meiers): could make an operator<< out of this
     {
         std::cout << "Files:" << std::endl;
-        std::cout << "   database: " << databaseName << std::endl;
-        std::cout << "   query:    " << queryFile << std::endl;
-        std::cout << "   output:   " << outputFile << std::endl;
+        std::cout << "   database:  " << databaseName << std::endl;
+        std::cout << "   query:     " << queryFile << std::endl;
+        std::cout << "   output:    " << outputFile << std::endl;
+        std::cout << "   extension: " << (onlyUngappedAlignments ? "ungapped" : "gapped") << std::endl;
         std::cout << "Options:" << std::endl;
         std::cout << "   frequency:        " << frequency << std::endl;
         std::cout << "   matchScore:       " << matchScore << std::endl;
@@ -87,6 +93,10 @@ struct SeqanLastOptions
         std::cout << "LastDB options:" << std::endl;
         std::cout << "   k:                " << k << std::endl;
         std::cout << "   shapeChoice:      " << shapeChoice << std::endl;
+        std::cout << "Debug options:" << std::endl;
+        std::cout << "   use hash table:   " << (useHashTable ? "yes":"no") << std::endl;
+        std::cout << "   ungapped Extend:  " << (myUngappedExtend ? "mine" : "seqan's") << std::endl;
+        std::cout << "   scoring type:     " << (newScoring ? "matrix" : "simple") << std::endl;
     }
 };
 
@@ -131,7 +141,7 @@ struct SeqanLastDbOptions
 // =============================================================================
 
 template <typename TSize, typename TType>
-int _writePropertyFile(CharString const & fileName, TSize k, TType shapeChoice, TSize strSetSize)
+int _writePropertyFile(CharString const & fileName, TSize k, TType shapeChoice, TSize)
 {
     std::fstream file(toCString(fileName), std::ios::binary | std::ios::out);
     if (!file.good()) {
@@ -155,26 +165,29 @@ void _setLastParser(ArgumentParser & parser)
     setVersion(parser, "0.1");
     setCategory(parser, "Local Alignment");
 
-    addUsageLine(parser, "[\\fIOPTIONS\\fP] <\\fIDATABASE\\fP> <\\fIQUERY FILE\\fP>");
+    addUsageLine(parser, "[\\fIOPTIONS\\fP] <\\fIINDEX PREFIX\\fP> <\\fIQUERY FILE\\fP>");
 
     addDescription(parser,
                    "SeqanLast is a reimplemtation of the core functionality of the LAST aligner "
                    "developed by Martin Frith (last.cbrc.jp, Kielbasa et al 2008: \"Adaptive "
                    "seeds tame genomic sequence comparison\"). It uses adaptive gapped seeds "
-                   "to find local similarities, which are then verified using certain heuristics.");
+                   "to find local similarities, which are then verified using an ungapped and "
+                   "a gapped extension.");
     addDescription(parser,
-                   "TODO: (1) supports ONLY DNA right now. (2) Default values are not chosen with any "
-                   "thought.");
+                   "Note: This is just a draft implementation with several properties that might "
+                   "be unfavorable. Only Dna5 alphabet is allowed (ignoring repeat masking "
+                   "information). A set of sequences is expected both for the database and as "
+                   "query. Moreover, the number of database sequences is limited to 256");
     addDescription(parser, "(c) 2013-2014 by Sascha Meiers");
 
-    addArgument(parser, ArgParseArgument(ArgParseArgument::STRING, "DATABASE"));
-    addArgument(parser, ArgParseArgument(ArgParseArgument::INPUTFILE, "QUERY FILE"));
-    setValidValues(parser, 1, "fa fasta");  // allow only fasta files as input
+    addArgument(parser, ArgParseArgument(ArgParseArgument::STRING, "INDEX PREFIX"));
+    addArgument(parser, ArgParseArgument(ArgParseArgument::INPUT_FILE, "QUERY FILE"));
+    setValidValues(parser, 1, "fa fasta");
 
     addSection(parser, "Output Options");
 
     addOption(parser, ArgParseOption("o", "output", "File to write results into (gff format)",
-                                     ArgParseArgument::OUTPUTFILE));
+                                     ArgParseArgument::OUTPUT_FILE));
     setDefaultValue(parser, "o", "stdout");
     addOption(parser, ArgParseOption("v", "verbose", "Set verbosity mode."));
     addOption(parser, ArgParseOption("V", "very-verbose", "Set stronger verbosity mode."));
@@ -200,16 +213,23 @@ void _setLastParser(ArgumentParser & parser)
     setDefaultValue(parser, "b", "-1");
     addOption(parser, ArgParseOption("x", "gappedXDrop", "Maximal x-drop score during the gapped alignment",
                                      ArgParseArgument::INTEGER));
-    setDefaultValue(parser, "x", "10");
+    setDefaultValue(parser, "x", "39");
     addOption(parser, ArgParseOption("y", "gaplessXDrop", "Maximal x-drop score during the gapless extension",
                                      ArgParseArgument::INTEGER));
     setDefaultValue(parser, "y", "14");
     addOption(parser, ArgParseOption("d", "gaplessThreshold", "Minimum score of the gapless alignment to continue",
                                      ArgParseArgument::INTEGER));
-    setDefaultValue(parser, "d", "12");
+    setDefaultValue(parser, "d", "17");
     addOption(parser, ArgParseOption("e", "gappedThreshold", "Minimum score of the gapped alignment to continue",
                                      ArgParseArgument::INTEGER));
-    setDefaultValue(parser, "e", "25");
+    setDefaultValue(parser, "e", "40");
+
+    addSection(parser, "Miscellaneous Options");
+    addOption(parser, ArgParseOption("u", "ungapped", "Ungapped (gapless) extension only. Note that threshold d determines the output rather than e"));
+    addOption(parser, ArgParseOption("iH", "ignore-hashtable", "Do not use the hash table to speed up adaptive seeding"));
+    addOption(parser, ArgParseOption("sU", "seqanUngappedExtension", "Use seqan module for ungapped extension, instead of self-written one"));
+    addOption(parser, ArgParseOption("oS", "oldScoring", "Use SimpleScore class instead of a matrix-based scoring function."));
+
 
     addTextSection(parser, "References");
     addText(parser, "Kielbasa et al.: Adaptive seeds tame genomic sequence comparison. 2008");
@@ -247,6 +267,11 @@ parseCommandLine(SeqanLastOptions & options, int argc, char const ** argv)
     getOptionValue(options.gappedThreshold, parser, "gappedThreshold");
     getOptionValue(options.outputFile, parser, "output");
 
+    options.onlyUngappedAlignments = isSet(parser, "ungapped");
+    options.useHashTable = ! isSet(parser, "iH");
+    options.myUngappedExtend = ! isSet(parser, "seqanUngappedExtension");
+    options.newScoring = !isSet(parser, "oldScoring");
+
     // Extract verbosity options.
     if (isSet(parser, "quiet"))
         options.verbosity = 0;
@@ -254,6 +279,7 @@ parseCommandLine(SeqanLastOptions & options, int argc, char const ** argv)
         options.verbosity = 2;
     if (isSet(parser, "very-verbose"))
         options.verbosity = 3;
+
 
     return seqan::ArgumentParser::PARSE_OK;
 }
@@ -297,38 +323,47 @@ _importSequences(TSeqSet & seqs, TIdSet & ids, CharString const & fileName, int 
     typedef typename Value<typename Value<TSeqSet>::Type>::Type  TAlph;
     typedef String<TAlph> TSequence;
     typedef typename Value<TIdSet>::Type  TId;
-
-    MultiSeqFile multiSeqFile;
-    if (!open(multiSeqFile.concat, toCString(fileName), OPEN_RDONLY))
+    
+    
+// new reading
+    
+    SeqFileIn file;
+    if (!open(file, toCString(fileName)))
     {
         if(verbosity)
             std::cout << "Failed to open " << fileName << "." << std::endl;
         return false;
     }
 
-    AutoSeqFormat format;
-    guessFormat(multiSeqFile.concat, format);
-    split(multiSeqFile, format);
-
-    unsigned seqCount = length(multiSeqFile);
-    reserve(seqs, seqCount, Exact());
-    reserve(ids, seqCount, Exact());
-
+    TSequence seq;
+    CharString idstr;
+    
     std::set<TId> uniqueIds; // set of short IDs (cut at first whitespace)
     bool idsUnique = true;
-
-    TSequence seq;
-    TId idstr;
-    for (unsigned i = 0; i < seqCount; ++i)
+    unsigned seqCount = 0;
+    while (!atEnd(file))
     {
-        assignSeq(seq, multiSeqFile[i], format);
-        assignSeqId(idstr, multiSeqFile[i], format);
-
-        idsUnique &= _checkUniqueId(uniqueIds, idstr);
-
-        appendValue(seqs, seq, Generous());
-        appendValue(ids, idstr, Generous());
+        try
+        {
+            readRecord(idstr, seq, file);
+            idsUnique &= _checkUniqueId(uniqueIds, idstr);
+            appendValue(ids, idstr);
+            appendValue(seqs, seq);
+            ++seqCount;
+        }
+        catch (UnexpectedEnd &)
+        {
+            break;
+        }
+        catch (ParseError & e)
+        {
+            std::cerr << "Problem reading record: " << e.what() << std::endl;
+            continue;
+        }
     }
+    
+// end new
+    
 
     if(verbosity) std::cout << "Loaded " << seqCount << " sequence" <<
         ((seqCount > 1) ? "s" : "") << " with total length " <<
@@ -434,7 +469,7 @@ template<typename TId, typename TScore, typename TRow, typename TFile>
 void
 _writeMatchGff(TId const & databaseID,
                TId const & patternID,
-               bool databaseStrand,
+               bool forwardStrand,
                TScore score, //lenAdjustment
                TRow const & row0,
                TRow const & row1,
@@ -449,13 +484,11 @@ _writeMatchGff(TId const & databaseID,
     file << "\tseqanLast";
     file << "\tseqanLast_match";
 
-    if (databaseStrand) {
-        file << "\t" << beginPosition(row0) + beginPosition(source(row0));
-        file << "\t" << endPosition(row0) + beginPosition(source(row0));
-    } else {
-        file << "\t" << length(source(row0)) - (endPosition(row0) + beginPosition(source(row0)));
-        file << "\t" << length(source(row0)) - (beginPosition(row0) + beginPosition(source(row0)));
-    }
+    // NOTE: Gff files are 1-based, the positions stand for first
+    //       and last match: to - from = length - 1
+    //
+    file << "\t" << beginPosition(row0) + beginPosition(source(row0)) + 1;
+    file << "\t" << endPosition(row0) + beginPosition(source(row0));
 
     file << "\t" << _computeIdentity(row0, row1);
 
@@ -468,11 +501,13 @@ _writeMatchGff(TId const & databaseID,
 
     file << ";score=" << score;
 
-    file << ";seq2Range=" << beginPosition(row1) + beginPosition(source(row1));
-    file << "," << endPosition(row1) + beginPosition(source(row1));
-
-    //    if (IsSameType<TAlphabet, Dna5>::VALUE || IsSameType<TAlphabet, Rna5>::VALUE)
-    //        file << ";eValue=" << _computeEValue(row0, row1, lengthAdjustment);
+    if (forwardStrand)
+    {
+        file << ";seq2Range=" << beginPosition(row1) + beginPosition(source(row1)) +1;
+        file << "," << endPosition(row1) + beginPosition(source(row1));
+    } else {
+        file << "___ERROR:_Write_function_cannot_handle_reverse_strands___";
+    }
 
     std::stringstream cigar, mutations;
     _getCigarLine(row0, row1, cigar, mutations);
