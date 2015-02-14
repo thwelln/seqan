@@ -296,7 +296,8 @@ struct InplaceRadixSorter
     TAccessFunctor 	   textAccess; // IMPORTANT: functors as copies
     TOrderFunctor 	   comp;
 
-    InplaceRadixSorter(TAccessFunctor const & f, TOrderFunctor const & c) : textAccess(f), comp(c)
+    InplaceRadixSorter(TAccessFunctor const & f, TOrderFunctor const & c) :
+        textAccess(f), comp(c)
     {}
 
     inline void operator()(TSAValue * beg,
