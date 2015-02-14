@@ -215,12 +215,12 @@ struct _RadixRecursionStackEntry
     from(a), to(b), depth(d)
     {}
 };
-/*
+
 template <typename TSAValue, typename TSmallSize=unsigned>
 struct RadixRecursionStack
 {
     typedef _RadixRecursionStackEntry<TSAValue, TSmallSize> TEntry;
-    String<TEntry> stack;
+    std::vector<TEntry> stack;
 
     RadixRecursionStack()
     {
@@ -231,21 +231,21 @@ struct RadixRecursionStack
 
     inline void push(TSAValue *beg, TSAValue *end, TSmallSize depth)
     {
-        appendValue(stack, TEntry(beg, end, depth), Generous());
+        stack.push_back(TEntry(beg, end, depth));
     }
     inline void pop(TSAValue *& beg, TSAValue *& end, TSmallSize &depth)
     {
-        TEntry & top = back(stack);
+        TEntry & top = stack.back();
         beg = top.from;
         end = top.to;
         depth = top.depth;
-        eraseBack(stack);
+        stack.pop_back();
     }
 };
-*/
 
-// TODO: this stack is not very generic, but so much faster than the one above :/
 
+// TODO: this stack is not very generic, but it MIGHT be faster.
+/*
 template <typename TSAValue, typename TSmallSize=unsigned>
 struct RadixRecursionStack
 {
@@ -275,7 +275,7 @@ struct RadixRecursionStack
         depth = top->depth;
     }
 };
-
+*/
 
 // ----------------------------------------------------------------------------
 // InplaceRadixSorter                                   general alphabet <= 256
