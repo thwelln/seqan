@@ -8,7 +8,7 @@
 
 cmake_minimum_required (VERSION 2.8.2)
 project (seqan_tests_gappedIndex)
-message (STATUS "Configuring tests/gappedIndex")
+message (STATUS "Configuring tests/gapped_index")
 
 # ----------------------------------------------------------------------------
 # Dependencies
@@ -29,12 +29,12 @@ include_directories (${SEQAN_INCLUDE_DIRS})
 add_definitions (${SEQAN_DEFINITIONS})
 
 # Update the list of file names below if you add source files to your test.
-add_executable (test_gappedIndex
-                test_gappedIndex.cpp
-                test_gappedIndex.h
-                test_gappedIndex_find.h
-		test_gappedIndex_stree.h
-		test_gappedIndex_construction.h)
+add_executable (test_gapped_index
+                test_gapped_index.cpp
+                test_gapped_index.h
+                test_gapped_index_find.h
+		test_gapped_index_stree.h
+		test_gapped_index_construction.h)
 
 # Add dependencies found by find_package (SeqAn).
 target_link_libraries (test_gappedIndex ${SEQAN_LIBRARIES})
