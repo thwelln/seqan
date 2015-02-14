@@ -1,7 +1,7 @@
 // ==========================================================================
 //                                gappedIndex
 // ==========================================================================
-// Copyright (c) 2006-2013, Knut Reinert, FU Berlin
+// Copyright (c) 2006-2015, Knut Reinert, FU Berlin
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -36,10 +36,10 @@
 #include <seqan/file.h>
 
 #include "../index/test_index_helpers.h"
-#include "test_gappedIndex.h"
-#include "test_gappedIndex_find.h"
-#include "test_gappedIndex_stree.h"
-#include "test_gappedIndex_construction.h"
+#include "test_gapped_index.h"
+#include "test_gapped_index_find.h"
+#include "test_gapped_index_stree.h"
+#include "test_gapped_index_construction.h"
 
 
 SEQAN_BEGIN_TESTSUITE(test_gappedIndex)
