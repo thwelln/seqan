@@ -202,6 +202,27 @@ setDefaultScoreMatrix(Score<TValue, ScoreMatrix<TSequenceValue, TSpec> > & sc, D
     arrayFill(sc.data_tab, sc.data_tab + TScore::TAB_SIZE, TValue());
 }
 
+
+//TODO(meiers): review and document
+template <typename TValue, typename TSequenceValue, typename TSpec>
+inline void
+setDefaultScoreMatrix(Score<TValue, ScoreMatrix<TSequenceValue, TSpec> > & sc, Default, TValue match, TValue mismatch)
+{
+    typedef Score<TValue, ScoreMatrix<TSequenceValue, TSpec> > TScore;
+
+    // set all entries to mismatch
+    arrayFill(sc.data_tab, sc.data_tab + TScore::TAB_SIZE, mismatch);
+
+    // set diagonal to match
+    typedef typename Size<TSequenceValue>::Type TSize;
+    TSize alphSize = ValueSize<TSequenceValue>::VALUE;
+    for (TSize i = 0; i < alphSize; ++i)
+    {
+        TSequenceValue c(i);
+        setScore(sc, c, c, match);
+    }
+}
+
 }  // namespace SEQAN_NAMESPACE_MAIN
 
 #endif  // SEQAN_SSCORE_MATRIX_H_
