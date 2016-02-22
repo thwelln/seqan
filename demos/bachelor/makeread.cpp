@@ -1,5 +1,6 @@
 #include <seqan/seq_io.h>
 #include <seqan/sequence.h>
+#include <stdlib.h>
 #include <random>	
 
 using namespace seqan;
@@ -10,11 +11,8 @@ int changeBase(DnaString *seqin, unsigned position, unsigned changevalue)
 	return 0;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-	unsigned startpos_array [] = {270000, 500000};
-	unsigned readlength_array [] = {50,100,150,200};
-	unsigned error_rate_array [] = {5,10,20,50}; //one error per amount
     CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
     char outpath [256];  
     CharString id;
@@ -24,22 +22,18 @@ int main()
     readRecord(id, seq, seqFileIn);
     
     DnaString seq2 = seq;
-    for (int startmode = 0; startmode<2; startmode++)
-    {
-	for (int lengthmode = 0; lengthmode<4; lengthmode++)
-	{
-	for (int errormode = 0; errormode<4; errormode++)
-	{
+
 			
-		unsigned startpos = startpos_array[startmode];
-		unsigned readlength = readlength_array[lengthmode];
-		unsigned error_rate = error_rate_array[errormode];	
+		unsigned startpos = atoi(argv[1]);
+		unsigned readlength = atoi(argv[2]);
+		unsigned error_rate = atoi(argv[3]);
+		unsigned seed = atoi(argv[4]);		
 			
 	    DnaString read = infixWithLength(seq2, startpos, readlength);
 	    
 	    std::cout << read << std::endl;
 	    
-	    std::mt19937 gen(41);
+	    std::mt19937 gen(seed);
 	    
 	    std::uniform_int_distribution<unsigned> posdist(0,length(read)-1);
 	    std::uniform_int_distribution<unsigned> basedist(1,3);    
@@ -58,9 +52,7 @@ int main()
 	    CharString readFileName = getAbsolutePath(outpath);  
 	    SeqFileOut seqFileOut(toCString(readFileName));
 	    writeRecord(seqFileOut, id ,read);
-	}
-	}
-	}    
+
     
     return 0;
 }
