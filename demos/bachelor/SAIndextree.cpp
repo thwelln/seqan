@@ -35,7 +35,7 @@ int main()
 	
 	unsigned klen = 10; // length of k-mere devision in pattern
 	
-	typedef Index<Dna5String, SAIndex<> > TSAIndex;
+	typedef Index<Dna5String, IndexSa<> > TSAIndex;
 	TSAIndex saindex(seq);
 	
 	Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
