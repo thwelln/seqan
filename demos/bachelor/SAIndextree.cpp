@@ -67,7 +67,7 @@ int main()
 		bool found = 0;
 		for (unsigned i=0; i<countOccurrences(sait); ++i)
 		{
-			unsigned findPos = getOccurrences(sait)[i]+compareLength;
+			unsigned findPos = getOccurrences(sait)[i];
 			
 			std::cout << ki << " : " << findPos << "\t";
 			if (findPos == (partialLength/2)+ki*klen)
