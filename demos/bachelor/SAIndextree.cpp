@@ -29,16 +29,16 @@ int main()
 	//DnaString pattern = "TTACGTC";
 	unsigned partialLength = 200000;
 	Dna5String seq = infixWithLength(seqin, readStartPos-(partialLength/2), partialLength);
-	reverse(read);
+	//reverse(read);
 	
 	std::cout << "READYYYY!" << std::endl;
 	
 	unsigned klen = 10; // length of k-mere devision in pattern
 	
-	typedef Index<Dna5String, FMIndex<> > TFMIndex;
-	TFMIndex fmindex(seq);
+	typedef Index<Dna5String, SAIndex<> > TSAIndex;
+	TSAIndex saindex(seq);
 	
-	Iterator<TFMIndex, TopDown<> >::Type fmit(fmindex);
+	Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
 	
 	unsigned tp = 0;
 	unsigned fn = 0;
@@ -70,7 +70,7 @@ int main()
 			unsigned findPos = getOccurrences(fmit)[i]+compareLength;
 			
 			std::cout << ki << " : " << findPos << "\t";
-			if (findPos == (partialLength/2)+length(read)-ki*klen)
+			if (findPos == (partialLength/2)+ki*klen)
 			{
 				found = 1;
 			}
