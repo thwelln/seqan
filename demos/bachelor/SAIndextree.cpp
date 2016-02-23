@@ -47,17 +47,17 @@ int main()
 	for (unsigned ki=0; ki<(length(read)/klen);++ki)
 	{
 		unsigned compareStartpos = ki*klen;
-		if (!goDown(fmit, infixWithLength(read, (compareStartpos), klen))) // compare full k-mere
+		if (!goDown(sait, infixWithLength(read, (compareStartpos), klen))) // compare full k-mere
 		{
 			std::cout << "FN!" << std::endl;
-			goRoot(fmit);
+			goRoot(sait);
 			++fn;
 			continue;
 		}
 		unsigned compareLength = klen;
-		while (countOccurrences(fmit)>1 && compareStartpos+compareLength<length(read))
+		while (countOccurrences(sait)>1 && compareStartpos+compareLength<length(read))
 		{
-			if (!goDown(fmit, read[compareStartpos+compareLength])) // compare next letter
+			if (!goDown(sait, read[compareStartpos+compareLength])) // compare next letter
 			{
 				//std::cout << "ERROR!" <<std::endl;
 				break;
@@ -65,9 +65,9 @@ int main()
 		++compareLength;
 		}
 		bool found = 0;
-		for (unsigned i=0; i<countOccurrences(fmit); ++i)
+		for (unsigned i=0; i<countOccurrences(sait); ++i)
 		{
-			unsigned findPos = getOccurrences(fmit)[i]+compareLength;
+			unsigned findPos = getOccurrences(sait)[i]+compareLength;
 			
 			std::cout << ki << " : " << findPos << "\t";
 			if (findPos == (partialLength/2)+ki*klen)
@@ -87,7 +87,7 @@ int main()
 		{
 			++fn;
 		}
-		goRoot(fmit);
+		goRoot(sait);
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
