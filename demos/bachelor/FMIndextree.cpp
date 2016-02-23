@@ -12,6 +12,8 @@ int main()
 	unsigned readLength=150;
 	unsigned readErrorRate=20;
 	
+	unsigned klen = 10; // length of k-mere devision in pattern
+	
 	CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
 	Dna5String seqin;
 	Dna5String read;
@@ -32,8 +34,6 @@ int main()
 	reverse(read);
 	
 	std::cout << "READYYYY!" << std::endl;
-	
-	unsigned klen = 10; // length of k-mere devision in pattern
 	
 	typedef Index<Dna5String, FMIndex<> > TFMIndex;
 	TFMIndex fmindex(seq);
