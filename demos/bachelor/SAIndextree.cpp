@@ -12,7 +12,7 @@ int main()
 	unsigned readLength=150;
 	unsigned readErrorRate=20;
 	
-	unsigned klen = 10; // length of k-mere devision in pattern
+	unsigned klen = 15; // length of k-mere devision in pattern
 	
 	CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
 	Dna5String seqin;
