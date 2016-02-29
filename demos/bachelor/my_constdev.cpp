@@ -36,7 +36,7 @@
 #include <seqan/sequence.h>
 #include <seqan/seq_io.h>
 #include <seqan/arg_parse.h>
-#include <seqan/indexmy.h>
+#include <seqan/indexmyown.h>
 
 
 #include <time.h>
