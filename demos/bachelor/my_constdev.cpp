@@ -162,7 +162,7 @@ int main(int argc, char const ** argv)
 
         
  
-	CharString seqFileName = getAbsolutePath("../../../seq.txt");
+	CharString seqFileName = getAbsolutePath("../../../seq.fasta");
     CharString id;
     Dna5String seq;
 
