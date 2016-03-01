@@ -184,10 +184,10 @@
 
 #include <seqan/modifier/cyclic_shape.h>
 #include <seqan/index/radix_inplace.h>
-#include <seqan/index/index_sa_radixSort.h>
+//#include <seqan/index/index_sa_radixSort.h>
 #include <seqan/index/index_gapped_dislex.h>
 #include <seqan/index/index_gapped_dislex_external4.h>
-#include <seqan/index/index_gapped_sa.h>
+//#include <seqan/index/index_gapped_sa.h>
 
 // ----------------------------------------------------------------------------
 // Pizza & Chili interface (compressed indices).
