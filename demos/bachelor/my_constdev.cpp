@@ -173,7 +173,7 @@ int main(int argc, char const ** argv)
             appendValue(seqs, seq);
 
 
-	Dna5String seq2 = infixWithLength(seqStr, 200, 150);
+	Dna5String seq2 = infixWithLength(seq, 200, 150);
     appendValue(seqs, seq2);
 
 
