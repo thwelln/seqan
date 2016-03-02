@@ -44,12 +44,19 @@
 
 using namespace seqan;
 
-
-int globalWrongMethods = 0;
-
-// ==========================================================================
-// Classes
-// ==========================================================================
+template <typename TLimits>
+unsigned getRealPos (TLimits lim, bool pattern,	unsigned dislexPos)
+{
+	typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
+	typedef Pair<unsigned, unsigned> TUPair;
+	typedef DislexReverseTransformMulti_<unsigned,
+	TLimits, TUPair >                             TGetDislexReversePos;
+	
+		unsigned fullDisPos = posGlobalize(TUPair(pattern,dislexPos), lim);
+		TUPair pair = TGetDislexReversePos(TShape::span,lim) (fullDisPos);
+		std::cout << fullDisPos << pair << std::endl;
+		return pair.i2;
+}
 
 void printUnsignedString(String<unsigned> st)
 {
@@ -73,6 +80,7 @@ void printUnsignedString(String<unsigned> st)
         typename TSpec,
         typename TAlgSpec >
     void _makeDislexString(
+        String <unsigned> &dis,
         TSA &suffixArray,
         StringSet<TString, TSpec> const &stringSet,
         TAlgSpec const)
@@ -81,7 +89,7 @@ void printUnsignedString(String<unsigned> st)
         // signed characters behave different than unsigned when compared
         // to get the same index with signed or unsigned chars we simply cast them to unsigned
         // before feeding them into the pipeline
-        typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
+        //typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
         typedef typename Concatenator<StringSet<TString, TSpec> >::Type            TConcat;
         typedef typename MakeUnsigned_< typename Value<TConcat>::Type >::Type    TUValue;
         typedef typename StringSetLimits<StringSet<TString, TSpec> >::Type TLimits;
@@ -94,28 +102,17 @@ void printUnsignedString(String<unsigned> st)
         typedef Pipe< TConcat, Source<> >                src_t;
         typedef Pipe< src_t, Caster<TUValue> >          unsigner_t;
         typedef Pipe< unsigner_t, MultiConstrSpec >        creator_t;
-        typedef Pair<unsigned, unsigned> TUPair;
-        typedef DislexReverseTransformMulti_<unsigned,
-        TLimits, TUPair >                             TGetDislexReversePos;
 
         // instantiation and processing
         
         src_t        src(concat(stringSet));
         unsigner_t  unsigner(src);
         creator_t    creator(unsigner, stringSetLimits(stringSet));
-        //String<unsigned> bla;
-        suffixArray << creator;
-        //std::cout << bla[0];        
-        std::cout << creator.dislexString[43];
-        printUnsignedString(creator.dislexString);
-        printUnsignedString(creator.dislexString_ordered);
-        TUPair bub = TGetDislexReversePos(TShape::span, stringSetLimits(stringSet)) (43);
-        std::cout << bub;
+		dis = creator.dislexString;
 		
-        suffixArray << creator;
-        #ifdef SEQAN_TEST_INDEX
-            //isSuffixArray(suffixArray, stringSet);
-        #endif
+        //suffixArray << creator;
+
+		
     }
 
 
@@ -142,28 +139,101 @@ int main(int argc, char *argv[])
 	unsigned klen = 10; // length of k-mere devision in pattern
 	
 	CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
-	Dna5String seq;
-	Dna5String read;
+	Dna5String seqIn;
+	Dna5String readIn;
 	CharString id;
     SeqFileIn seqFileIn(toCString(seqFileName));
-    readRecord(id, seq, seqFileIn);
+    readRecord(id, seqIn, seqFileIn);
     
     char outpath [256];
 	sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%.2f.fasta",readStartPos,readLength,readErrorRate);
 	CharString readFileName = getAbsolutePath(outpath);  
     SeqFileIn readFileIn(toCString(readFileName));
-    readRecord(id, read, readFileIn);
+    readRecord(id, readIn, readFileIn);
     
     StringSet<seqan::Dna5String> seqs;
-    appendValue(seqs, seq);
-    appendValue(seqs, read);
+    appendValue(seqs, seqIn);
+    appendValue(seqs, readIn);
 
 
-     typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
-        {
+			typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
             typedef Index<StringSet<Dna5String> > TIndex;
+			typedef typename StringSetLimits<StringSet<Dna5String> >::Type TLimits;
+			typedef Pair<unsigned, unsigned> TUPair;			
             TIndex index(seqs);
-			_makeDislexString(indexSA(index), indexText(index), DislexExternal<TShape, Skew7>());
-        }  
+            String <unsigned> dislex;
+			_makeDislexString(dislex, indexSA(index), indexText(index), DislexExternal<TShape, Skew7>());
+
+			TLimits lim = stringSetLimits(seqs);
+			//printUnsignedString(dislex);
+			
+			
+			String <unsigned> seq = prefix(dislex, posGlobalize(TUPair(1,0),lim));
+			String <unsigned> read = suffix(dislex, posGlobalize(TUPair(1,0),lim));			
+			//std::cout << length(seq) << std::endl;
+			//std::cout << length(read) << std::endl;
+			
+				// BUILDING INDEX
+				typedef Index<String<unsigned>, IndexSa<> > TSAIndex;
+				TSAIndex saindex(seq);
+	
+				Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
+				//SEARCHING
+				unsigned tp = 0;
+				unsigned fn = 0;
+				unsigned fp = 0;
+				
+				for (unsigned ki=0; ki<(length(read)/klen);++ki)
+				{
+					unsigned compareStartpos = ki*klen;
+					if (!goDown(sait, infixWithLength(read, (compareStartpos), klen))) // compare full k-mere
+					{
+						std::cout << "FN!" << std::endl;
+						goRoot(sait);
+						++fn;
+						continue;
+					}
+					unsigned compareLength = klen;
+					while (countOccurrences(sait)>1 && compareStartpos+compareLength<length(read))
+					{
+						if (!goDown(sait, read[compareStartpos+compareLength])) // compare next letter
+						{
+							//std::cout << "ERROR!" <<std::endl;
+							break;
+						}
+					++compareLength;
+					}
+					bool found = 0;
+					for (unsigned i=0; i<countOccurrences(sait); ++i)
+					{
+						unsigned findPos = getRealPos(lim,0,(getOccurrences(sait)[i]));
+						
+						std::cout << ki << " : " << findPos << "\t";
+						if (findPos == getRealPos(lim,1,readStartPos+ki*klen))
+						{
+							found = 1;
+						}
+						else
+						{
+							++fp;
+						}
+					}
+					if (found)
+					{
+						++tp;
+					}
+					else
+					{
+						++fn;
+					}
+					goRoot(sait);
+					std::cout << std::endl;
+				}
+				std::cout << std::endl;
+				std::cout << "TP:	" << tp << std::endl;
+				std::cout << "FN:	" << fn << std::endl;
+				std::cout << "FP:	" << fp << std::endl;	
+			
+				
     return 0;
 }

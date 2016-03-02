@@ -6,41 +6,38 @@
 
 using namespace seqan;
 
-int main()
+int main(int argc, char *argv[])
 {
-	unsigned readStartPos=270000;
-	unsigned readLength=150;
-	unsigned readErrorRate=20;
+		unsigned readStartPos = atoi(argv[1]);
+		unsigned readLength = atoi(argv[2]);
+		double readErrorRate = atof(argv[3]);
 	
-	unsigned klen = 15; // length of k-mere devision in pattern
+	unsigned klen = 10; // length of k-mere devision in pattern
 	
 	CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
-	Dna5String seqin;
+	Dna5String seq;
 	Dna5String read;
 	CharString id;
     SeqFileIn seqFileIn(toCString(seqFileName));
-    readRecord(id, seqin, seqFileIn);
+    readRecord(id, seq, seqFileIn);
     
     char outpath [256];
-	sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%d.fasta",readStartPos,readLength,readErrorRate);
+	sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%.2f.fasta",readStartPos,readLength,readErrorRate);
 	CharString readFileName = getAbsolutePath(outpath);  
     SeqFileIn readFileIn(toCString(readFileName));
     readRecord(id, read, readFileIn);    
     
-	//DnaString text = "AGTATCTCATTGACTTAACG";
-	//DnaString pattern = "TTACGTC";
-	unsigned partialLength = 200000;
-	Dna5String seq = infixWithLength(seqin, readStartPos-(partialLength/2), partialLength);
 	//reverse(read);
 	
 	std::cout << "READYYYY!" << std::endl;
 	
+	// BUILDING INDEX
 	
 	typedef Index<Dna5String, IndexSa<> > TSAIndex;
 	TSAIndex saindex(seq);
 	
 	Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
-	
+	//SEARCHING
 	unsigned tp = 0;
 	unsigned fn = 0;
 	unsigned fp = 0;
@@ -71,7 +68,7 @@ int main()
 			unsigned findPos = getOccurrences(sait)[i];
 			
 			std::cout << ki << " : " << findPos << "\t";
-			if (findPos == (partialLength/2)+ki*klen)
+			if (findPos == readStartPos+ki*klen)
 			{
 				found = 1;
 			}

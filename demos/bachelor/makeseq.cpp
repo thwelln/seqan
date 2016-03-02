@@ -1,5 +1,6 @@
 #include <seqan/seq_io.h>
 #include <seqan/sequence.h>
+#include <stdlib.h>
 #include <random>	
 
 using namespace seqan;
@@ -10,11 +11,8 @@ int changeBase(DnaString *seqin, unsigned position, unsigned changevalue)
 	return 0;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-	unsigned startpos_array [] = {100000, 150000};
-	unsigned readlength_array [] = {100,200,500};
-	double error_rate_array [] = {0.5,0.2,0.1,0.05,0.02}; //percentage
     CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
     char outpath [256];  
     CharString id;
@@ -24,29 +22,23 @@ int main()
     readRecord(id, seq, seqFileIn);
     
     DnaString seq2 = seq;
-    for (int startmode = 0; startmode<2; startmode++)
-    {
-	for (int lengthmode = 0; lengthmode<3; lengthmode++)
-	{
-	for (int errormode = 0; errormode<5; errormode++)
-	{
+
 			
-		unsigned startpos = startpos_array[startmode];
-		unsigned readlength = readlength_array[lengthmode];
-		double error_rate = error_rate_array[errormode];	
+		unsigned startpos = atoi(argv[1]);
+		unsigned readlength = atoi(argv[2]);
+		unsigned error_rate = atoi(argv[3]);
+		unsigned seed = atoi(argv[4]);		
 			
 	    DnaString read = infixWithLength(seq2, startpos, readlength);
 	    
 	    std::cout << read << std::endl;
 	    
-	    std::mt19937 gen(41);
+	    std::mt19937 gen(seed);
 	    
 	    std::uniform_int_distribution<unsigned> posdist(0,length(read)-1);
 	    std::uniform_int_distribution<unsigned> basedist(1,3);    
 	    
-	    unsigned erroramount = (unsigned) (readlength*error_rate);
-	    std::cout << erroramount << std::endl;
-	    for (unsigned i=1;i<=erroramount;i++)
+	    for (unsigned i=0;i<=readlength/error_rate;i++)
 	    {
 			unsigned pos = posdist(gen);
 			unsigned change = basedist(gen);
@@ -56,13 +48,11 @@ int main()
 	    }
 	    
 	    std::cout << read << std::endl;
-	    sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%.2f.fasta",startpos,readlength,error_rate);
+	    sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%d.fasta",startpos,readlength,error_rate);
 	    CharString readFileName = getAbsolutePath(outpath);  
 	    SeqFileOut seqFileOut(toCString(readFileName));
 	    writeRecord(seqFileOut, id ,read);
-	}
-	}
-	}    
+
     
     return 0;
 }

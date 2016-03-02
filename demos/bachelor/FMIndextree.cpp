@@ -6,39 +6,41 @@
 
 using namespace seqan;
 
-int main()
+int main(int argc, char *argv[])
 {
-	unsigned readStartPos=270000;
-	unsigned readLength=150;
-	unsigned readErrorRate=20;
+		unsigned readStartPos = atoi(argv[1]);
+		unsigned readLength = atoi(argv[2]);
+		double readErrorRate = atof(argv[3]);
 	
 	unsigned klen = 10; // length of k-mere devision in pattern
 	
 	CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
-	Dna5String seqin;
+	Dna5String seq;
 	Dna5String read;
 	CharString id;
     SeqFileIn seqFileIn(toCString(seqFileName));
-    readRecord(id, seqin, seqFileIn);
+    readRecord(id, seq, seqFileIn);
     
     char outpath [256];
-	sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%d.fasta",readStartPos,readLength,readErrorRate);
+	sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%.2f.fasta",readStartPos,readLength,readErrorRate);
 	CharString readFileName = getAbsolutePath(outpath);  
     SeqFileIn readFileIn(toCString(readFileName));
     readRecord(id, read, readFileIn);    
     
-	//DnaString text = "AGTATCTCATTGACTTAACG";
-	//DnaString pattern = "TTACGTC";
-	unsigned partialLength = 200000;
-	Dna5String seq = infixWithLength(seqin, readStartPos-(partialLength/2), partialLength);
-	reverse(read);
+
+	reverse(read); //ONLY FOR FM
 	
 	std::cout << "READYYYY!" << std::endl;
+
+// BUILDING INDEX
+
 	
 	typedef Index<Dna5String, FMIndex<> > TFMIndex;
 	TFMIndex fmindex(seq);
 	
 	Iterator<TFMIndex, TopDown<> >::Type fmit(fmindex);
+	
+// SEARCHING
 	
 	unsigned tp = 0;
 	unsigned fn = 0;
@@ -70,7 +72,7 @@ int main()
 			unsigned findPos = getOccurrences(fmit)[i]+compareLength;
 			
 			std::cout << ki << " : " << findPos << "\t";
-			if (findPos == (partialLength/2)+length(read)-ki*klen)
+			if (findPos == readStartPos+length(read)-ki*klen)
 			{
 				found = 1;
 			}
@@ -90,6 +92,8 @@ int main()
 		goRoot(fmit);
 		std::cout << std::endl;
 	}
+	
+// OUTPUT
 	std::cout << std::endl;
 	std::cout << "TP:	" << tp << std::endl;
 	std::cout << "FN:	" << fn << std::endl;

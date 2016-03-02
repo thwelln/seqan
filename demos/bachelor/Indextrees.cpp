@@ -10,7 +10,7 @@ int main()
 {
 	unsigned readStartPos=270000;
 	unsigned readLength=150;
-	unsigned readErrorRate=20;
+	double readErrorRate=0;
 	
 	CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
 	Dna5String seqin;
@@ -20,7 +20,7 @@ int main()
     readRecord(id, seqin, seqFileIn);
     
     char outpath [256];
-	sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%d.fasta",readStartPos,readLength,readErrorRate);
+	sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%.2f.fasta",readStartPos,readLength,readErrorRate);
 	CharString readFileName = getAbsolutePath(outpath);  
     SeqFileIn readFileIn(toCString(readFileName));
     readRecord(id, read, readFileIn);    

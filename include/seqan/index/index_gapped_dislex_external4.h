@@ -289,7 +289,7 @@ struct Pipe<TInput, Multi<DislexExternal<TShape, TSACA>, TPair, TLimits> >
     TPipeFilterI2                                           filter();
     TPipeReverseTransform in;       // final Pipe
     String<unsigned> dislexString;
-    String<unsigned> dislexString2;
+    String<unsigned> dislexString_ordered;
 
     template <typename TLimits_>
     Pipe(TLimits_ const & strSetLimits, SEQAN_CTOR_ENABLE_IF(IsSameType<TLimits, TLimits_>)) :

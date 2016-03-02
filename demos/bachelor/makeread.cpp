@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 			
 		unsigned startpos = atoi(argv[1]);
 		unsigned readlength = atoi(argv[2]);
-		unsigned error_rate = atoi(argv[3]);
+		double error_rate = atof(argv[3]);
 		unsigned seed = atoi(argv[4]);		
 			
 	    DnaString read = infixWithLength(seq2, startpos, readlength);
@@ -36,9 +36,12 @@ int main(int argc, char *argv[])
 	    std::mt19937 gen(seed);
 	    
 	    std::uniform_int_distribution<unsigned> posdist(0,length(read)-1);
-	    std::uniform_int_distribution<unsigned> basedist(1,3);    
+	    std::uniform_int_distribution<unsigned> basedist(1,3);
 	    
-	    for (unsigned i=0;i<=readlength/error_rate;i++)
+	       
+	    unsigned erroramount = (unsigned) (readlength*error_rate);
+	    std::cout << erroramount << std::endl;
+	    for (unsigned i=1;i<=erroramount;i++)
 	    {
 			unsigned pos = posdist(gen);
 			unsigned change = basedist(gen);
@@ -48,7 +51,7 @@ int main(int argc, char *argv[])
 	    }
 	    
 	    std::cout << read << std::endl;
-	    sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%d.fasta",startpos,readlength,error_rate);
+	    sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%.2f.fasta",startpos,readlength,error_rate);
 	    CharString readFileName = getAbsolutePath(outpath);  
 	    SeqFileOut seqFileOut(toCString(readFileName));
 	    writeRecord(seqFileOut, id ,read);
