@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 			
 				// BUILDING INDEX
 				typedef Index<String<unsigned>, IndexSa<> > TSAIndex;
-				TSAIndex saindex(dislex);
+				TSAIndex saindex(test);
 				std::cout << "DONE!";
 				Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
 				std::cout << "DONE!";				
