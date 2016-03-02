@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
 		unsigned readLength = atoi(argv[2]);
 		double readErrorRate = atof(argv[3]);
 	
-	unsigned klen = 1; // length of k-mere devision in pattern
+	unsigned klen = 2; // length of k-mere devision in pattern
 	
 	CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
 	Dna5String seqIn;
@@ -180,8 +180,8 @@ int main(int argc, char *argv[])
 			
 			String <unsigned> seq = prefix(dislex, 200000);
 			String <unsigned> read = suffix(dislex, 200000);
-			printUnsignedString(seq);
-			printUnsignedString(read);
+			//printUnsignedString(seq);
+			//printUnsignedString(read);
 			std::cout << length(seq) << std::endl;
 			std::cout << length(read) << std::endl;
 			
