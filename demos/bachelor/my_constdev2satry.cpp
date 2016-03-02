@@ -219,6 +219,7 @@ int main(int argc, char *argv[])
 					bool found = 0;
 					for (unsigned i=0; i<countOccurrences(sait); ++i)
 					{
+						std::cout << "DISPOS" << (getOccurrences(sait)[i]);
 						unsigned findPos = getRealPos(lim,0,(getOccurrences(sait)[i]));
 						
 						std::cout << ki << " : " << findPos << "\t";
