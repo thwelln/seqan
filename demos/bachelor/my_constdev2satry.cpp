@@ -219,10 +219,10 @@ int main(int argc, char *argv[])
 					bool found = 0;
 					for (unsigned i=0; i<countOccurrences(sait); ++i)
 					{
-						std::cout << "DISPOS" << (getOccurrences(sait)[i]);
+						std::cout << "DISPOS " << (getOccurrences(sait)[i]) << std::endl;
 						unsigned findPos = getRealPos(lim,0,(getOccurrences(sait)[i]));
 						
-						std::cout << ki << " : " << findPos << "\t";
+						std::cout << ki << " : " << findPos << std::endl << std::endl;
 						if (findPos == readStartPos+getRealPos(lim,1,ki*klen))
 						{
 							found = 1;
