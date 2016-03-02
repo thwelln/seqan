@@ -198,7 +198,6 @@ int main(int argc, char *argv[])
 				
 				for (unsigned ki=0; ki<(length(read)/klen);++ki)
 				{
-					std::cout << "klen: " <<klen << std::endl;
 					unsigned compareStartpos = ki*klen;
 					if (!goDown(sait, infixWithLength(read, (compareStartpos), klen))) // compare full k-mere
 					{
