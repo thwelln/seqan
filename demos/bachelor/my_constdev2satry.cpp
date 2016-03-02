@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
 		unsigned readLength = atoi(argv[2]);
 		double readErrorRate = atof(argv[3]);
 	
-	unsigned klen = 10; // length of k-mere devision in pattern
+	unsigned klen = 1; // length of k-mere devision in pattern
 	
 	CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
 	Dna5String seqIn;
