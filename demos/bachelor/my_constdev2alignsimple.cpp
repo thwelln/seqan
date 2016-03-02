@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
 			resize(rows(align), 2);
 			assignSource(row(align, 0), seqIn);
 			assignSource(row(align, 1), readIn);
-			int score = globalAlignment(align, Score<int, Simple>(1, 0, -1));
+			int score = globalAlignment(align, Score<int, Simple>(1, 0, 0,-1));
 			std::cout << "Score: " << score << std::endl;
 			std::cout << align << std::endl;
 				
