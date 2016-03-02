@@ -54,7 +54,7 @@ unsigned getRealPos (TLimits lim, bool pattern,	unsigned dislexPos)
 	
 		unsigned fullDisPos = posGlobalize(TUPair(pattern,dislexPos), lim);
 		TUPair pair = TGetDislexReversePos(TShape::span,lim) (fullDisPos);
-		std::cout << fullDisPos << pair << std::endl;
+		//std::cout << fullDisPos << pair << std::endl;
 		return pair.i2;
 }
 
@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
 						unsigned findPos = getRealPos(lim,0,(getOccurrences(sait)[i]));
 						
 						std::cout << ki << " : " << findPos << "\t";
-						if (findPos == getRealPos(lim,1,readStartPos+ki*klen))
+						if (findPos == readStartPos+getRealPos(lim,1,ki*klen))
 						{
 							found = 1;
 						}
