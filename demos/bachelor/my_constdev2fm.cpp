@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
 // BUILDING INDEX
 
 	
-	typedef Index<Dna5String, FMIndex<> > TFMIndex;
+	typedef Index<String <unsigned>, FMIndex<> > TFMIndex;
 	TFMIndex fmindex(seq);
 	
 	Iterator<TFMIndex, TopDown<> >::Type fmit(fmindex);
