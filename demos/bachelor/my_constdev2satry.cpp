@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
 			std::cout << "zrezz!" << std::endl;
 
 			TLimits lim = stringSetLimits(seqs);
-			printUnsignedString(dislex);
+			//printUnsignedString(dislex);
 			
 			std::cout << length(dislex);
 			
