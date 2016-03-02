@@ -173,74 +173,80 @@ int main(int argc, char *argv[])
 			std::cout << length(dislex);
 			String <unsigned> seq = prefix(dislex, posGlobalize(TUPair(1,0),lim));
 			String <unsigned> read = suffix(dislex, posGlobalize(TUPair(1,0),lim));
+			
+			reverse(read);
+			
 			printUnsignedString(seq);
 			printUnsignedString(read);
 			std::cout << length(seq) << std::endl;
 			std::cout << length(read) << std::endl;
+
+// BUILDING INDEX
+
+	
+	typedef Index<Dna5String, FMIndex<> > TFMIndex;
+	TFMIndex fmindex(seq);
+	
+	Iterator<TFMIndex, TopDown<> >::Type fmit(fmindex);
+	
+// SEARCHING
+	
+	unsigned tp = 0;
+	unsigned fn = 0;
+	unsigned fp = 0;
+	
+	for (unsigned ki=0; ki<(length(read)/klen);++ki)
+	{
+		unsigned compareStartpos = ki*klen;
+		if (!goDown(fmit, infixWithLength(read, (compareStartpos), klen))) // compare full k-mere
+		{
+			std::cout << "FN!" << std::endl;
+			goRoot(fmit);
+			++fn;
+			continue;
+		}
+		unsigned compareLength = klen;
+		while (countOccurrences(fmit)>1 && compareStartpos+compareLength<length(read))
+		{
+			if (!goDown(fmit, read[compareStartpos+compareLength])) // compare next letter
+			{
+				//std::cout << "ERROR!" <<std::endl;
+				break;
+			}
+		++compareLength;
+		}
+		bool found = 0;
+		for (unsigned i=0; i<countOccurrences(fmit); ++i)
+		{
+			unsigned findPos = getOccurrences(fmit)[i]+compareLength;
 			
-				// BUILDING INDEX
-				typedef Index<String<unsigned>, IndexSa<> > TSAIndex;
-				TSAIndex saindex(dislex);
-				std::cout << "DONE!";
-				Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
-				std::cout << "DONE!";				
-				//SEARCHING
-				unsigned tp = 0;
-				unsigned fn = 0;
-				unsigned fp = 0;
-				
-				for (unsigned ki=0; ki<(length(read)/klen);++ki)
-				{
-					std::cout << "klen: " <<klen << std::endl;
-					unsigned compareStartpos = ki*klen;
-					if (!goDown(sait, infixWithLength(read, (compareStartpos), klen))) // compare full k-mere
-					{
-						std::cout << "FN!" << std::endl;
-						goRoot(sait);
-						++fn;
-						continue;
-					}
-					unsigned compareLength = klen;
-					while (countOccurrences(sait)>1 && compareStartpos+compareLength<length(read))
-					{
-						if (!goDown(sait, read[compareStartpos+compareLength])) // compare next letter
-						{
-							//std::cout << "ERROR!" <<std::endl;
-							break;
-						}
-					++compareLength;
-					}
-					bool found = 0;
-					for (unsigned i=0; i<countOccurrences(sait); ++i)
-					{
-						unsigned findPos = getRealPos(lim,0,(getOccurrences(sait)[i]));
-						
-						std::cout << ki << " : " << findPos << "\t";
-						if (findPos == readStartPos+getRealPos(lim,1,ki*klen))
-						{
-							found = 1;
-						}
-						else
-						{
-							++fp;
-						}
-					}
-					if (found)
-					{
-						++tp;
-					}
-					else
-					{
-						++fn;
-					}
-					goRoot(sait);
-					std::cout << std::endl;
-				}
-				std::cout << std::endl;
-				std::cout << "TP:	" << tp << std::endl;
-				std::cout << "FN:	" << fn << std::endl;
-				std::cout << "FP:	" << fp << std::endl;	
-			
-				
-    return 0;
+			std::cout << ki << " : " << findPos << "\t";
+			if (findPos == readStartPos+length(read)-ki*klen)
+			{
+				found = 1;
+			}
+			else
+			{
+				++fp;
+			}
+		}
+		if (found)
+		{
+			++tp;
+		}
+		else
+		{
+			++fn;
+		}
+		goRoot(fmit);
+		std::cout << std::endl;
+	}
+	
+// OUTPUT
+	std::cout << std::endl;
+	std::cout << "TP:	" << tp << std::endl;
+	std::cout << "FN:	" << fn << std::endl;
+	std::cout << "FP:	" << fp << std::endl;	
+		
+	return 0;
 }
