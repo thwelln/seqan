@@ -186,10 +186,10 @@ int main(int argc, char *argv[])
 	
 	typedef Index<String <unsigned>, FMIndex<> > TFMIndex;
 	TFMIndex fmindex(dislex);
-	std::cout << "BLA!" << endl;
+	std::cout << "BLA!" << std::endl;
 	
 	Iterator<TFMIndex, TopDown<> >::Type fmit(fmindex);
-	std::cout << "BLUB!" << endl;
+	std::cout << "BLUB!" << std::endl;
 	
 // SEARCHING
 	
