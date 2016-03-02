@@ -178,8 +178,8 @@ int main(int argc, char *argv[])
 				appendValue(test, counter);
 			}
 			
-			String <unsigned> seq = test;
-			String <unsigned> read = suffix(test, 200);
+			String <unsigned> seq = dislex;
+			String <unsigned> read = suffix(dislex, 200);
 			printUnsignedString(seq);
 			printUnsignedString(read);
 			std::cout << length(seq) << std::endl;
@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 			
 				// BUILDING INDEX
 				typedef Index<String<unsigned>, IndexSa<> > TSAIndex;
-				TSAIndex saindex(test);
+				TSAIndex saindex(seq);
 				std::cout << "DONE!";
 				Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
 				std::cout << "DONE!";				
