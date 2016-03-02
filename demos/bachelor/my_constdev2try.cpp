@@ -172,7 +172,9 @@ int main(int argc, char *argv[])
 			
 			std::cout << length(dislex);
 			String <unsigned> seq = prefix(dislex, posGlobalize(TUPair(1,0),lim));
-			String <unsigned> read = suffix(dislex, posGlobalize(TUPair(1,0),lim));			
+			String <unsigned> read = suffix(dislex, posGlobalize(TUPair(1,0),lim));
+			printUnsignedString(seq);
+			printUnsignedString(read);			
 			std::cout << length(seq) << std::endl;
 			std::cout << length(read) << std::endl;
 			
