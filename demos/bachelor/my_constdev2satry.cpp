@@ -178,8 +178,8 @@ int main(int argc, char *argv[])
 				appendValue(test, counter);
 			}
 			
-			String <unsigned> seq = prefix(test, posGlobalize(TUPair(1,0),lim));
-			String <unsigned> read = suffix(test, posGlobalize(TUPair(1,0),lim));
+			String <unsigned> seq = test;
+			String <unsigned> read = suffix(test, 200);
 			printUnsignedString(seq);
 			printUnsignedString(read);
 			std::cout << length(seq) << std::endl;
