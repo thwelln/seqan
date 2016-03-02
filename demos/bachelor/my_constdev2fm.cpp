@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
 
 	
 	typedef Index<String <unsigned>, FMIndex<> > TFMIndex;
-	TFMIndex fmindex(seq);
+	TFMIndex fmindex(dislex);
 	
 	Iterator<TFMIndex, TopDown<> >::Type fmit(fmindex);
 	
