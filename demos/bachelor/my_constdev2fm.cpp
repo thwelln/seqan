@@ -218,10 +218,10 @@ int main(int argc, char *argv[])
 		bool found = 0;
 		for (unsigned i=0; i<countOccurrences(fmit); ++i)
 		{
-			unsigned findPos = getOccurrences(fmit)[i]+compareLength;
+			unsigned findPos = getRealPos(lim,0,(getOccurrences(fmit)[i]+compareLength));
 			
 			std::cout << ki << " : " << findPos << "\t";
-			if (findPos == readStartPos+length(read)-ki*klen)
+			if (findPos == readStartPos+getRealPos(lim,0,(length(read)-ki*klen)))
 			{
 				found = 1;
 			}
