@@ -178,8 +178,8 @@ int main(int argc, char *argv[])
 				appendValue(test, counter);
 			}
 			
-			String <unsigned> seq = dislex;
-			String <unsigned> read = suffix(dislex, 200);
+			String <unsigned> seq = prefix(dislex, 200000);
+			String <unsigned> read = suffix(dislex, 200000);
 			printUnsignedString(seq);
 			printUnsignedString(read);
 			std::cout << length(seq) << std::endl;
