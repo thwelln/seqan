@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
     char outpath [256];
 	sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%.2f.fasta",readStartPos,readLength,readErrorRate);
 	CharString readFileName = getAbsolutePath(outpath);
-    SeqFileIn seqFileIn(toCString(readFileName));
+    SeqFileIn seqFileIn(toCString(seqFileName));
     readRecord(id, seqIn, seqFileIn);
     SeqFileIn readFileIn(toCString(readFileName));
     readRecord(id, readIn, readFileIn);
