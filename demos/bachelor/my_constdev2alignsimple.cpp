@@ -193,5 +193,14 @@ int main(int argc, char *argv[])
 			std::cout << "Score: " << score << std::endl;
 			std::cout << align << std::endl;
 				
+			typedef Align<String<unsigned>, ArrayGaps> TAlignU;      // align type
+			TAlignU align2;
+			resize(rows(align2), 2);
+			assignSource(row(align2, 0), seq);
+			assignSource(row(align2, 1), read);
+			int score2 = globalAlignment(align2, Score<int, Simple>(1, 0, 0,-1));
+			std::cout << "Score: " << score2 << std::endl;
+			std::cout << align2 << std::endl;
+				
     return 0;
 }
