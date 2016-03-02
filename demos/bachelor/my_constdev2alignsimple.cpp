@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
 			TLimits lim = stringSetLimits(seqs);
 			//printUnsignedString(dislex);
 			
-			std::cout << length(dislex);
+			std::cout << length(dislex) << std::endl;
 			
 			String <unsigned> seq = prefix(dislex, 200);
 			String <unsigned> read = suffix(dislex, 200);
@@ -183,7 +183,15 @@ int main(int argc, char *argv[])
 			std::cout << length(seq) << std::endl;
 			std::cout << length(read) << std::endl;
 			
-				
+			
+			typedef Align<Dna5String, ArrayGaps> TAlignDna;      // align type
+			TAlignDna align;
+			resize(rows(align), 2);
+			assignSource(row(align, 0), seqIn);
+			assignSource(row(align, 1), readIn);
+			int score = globalAlignment(align, Score<int, Simple>(1, 0, 0));
+			std::cout << "Score: " << score << std::endl;
+			std::cout << align << std::endl;
 				
     return 0;
 }
