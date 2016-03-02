@@ -47,7 +47,8 @@ using namespace seqan;
 template <typename TLimits>
 unsigned getRealPos (TLimits lim, bool pattern,	unsigned dislexPos)
 {
-	typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
+	//typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
+	typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,1> >, 1> > TShape;
 	typedef Pair<unsigned, unsigned> TUPair;
 	typedef DislexReverseTransformMulti_<unsigned,
 	TLimits, TUPair >                             TGetDislexReversePos;
@@ -157,7 +158,8 @@ int main(int argc, char *argv[])
     appendValue(seqs, readIn);
 	std::cout << "READ!" << std::endl;
 
-			typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
+			//typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
+			typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,1> >, 1> > TShape;
             typedef Index<StringSet<Dna5String> > TIndex;
 			typedef typename StringSetLimits<StringSet<Dna5String> >::Type TLimits;
 			typedef Pair<unsigned, unsigned> TUPair;			
