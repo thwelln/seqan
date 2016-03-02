@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
     //SeqFileIn readFileIn(toCString(readFileName));
     //readRecord(id, readIn, readFileIn);
     
-    readIn = infixWithlength(seqIn, 60, 80);
+    readIn = infixWithLength(seqIn, 60, 80);
     
     StringSet<seqan::Dna5String> seqs;
     appendValue(seqs, seqIn);
