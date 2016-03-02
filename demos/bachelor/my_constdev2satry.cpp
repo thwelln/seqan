@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
 			std::cout << length(dislex);
 			
 			String <unsigned> test;
-			for (unsigned counter = 0; counter < 400)
+			for (unsigned counter = 0; counter < 400; ++counter)
 			{
 				appendValue(test, counter);
 			}
