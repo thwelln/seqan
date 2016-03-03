@@ -346,12 +346,7 @@ struct Pipe<TInput, Multi<DislexExternal<TShape, TSACA>, TPair, TLimits> >
         // 4. Map text Positions to lexText positions
         TDislexMapper                                           _map(TShape::span, _limits);
         TPoolMapper                                             mapper(namer, _map);
-        
-        TDislexMapper                                           _map_ordered(TShape::span, _limits);
-        TPoolMapper                                             mapper_ordered(namer, _map);
-        
         mapper << namer;
-        mapper_ordered << namer;
         
         sigma = (namer.tmp.i2 +1);
 
@@ -362,11 +357,8 @@ struct Pipe<TInput, Multi<DislexExternal<TShape, TSACA>, TPair, TLimits> >
 
         // 5. Discard positions, keep rank
 		TPipeFilterI2 filter(mapper);
-		TPipeFilterI2 filter_ordered(mapper);
-				
 		dislexString << filter;
-		dislexString_ordered << filter_ordered;
-		
+
         // 6. Run SACA on lex text
         pool << filter;
 

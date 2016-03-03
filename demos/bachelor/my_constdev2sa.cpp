@@ -29,7 +29,7 @@
 // DAMAGE.
 //
 // ==========================================================================
-// Author: Sascha Meiers <meiers@inf.fu-berlin.de>
+// Author: Thimo Wellner <thimo.wellner@fu-berlin.de> (Modified from Sascha Meiers)
 // ==========================================================================
 
 #include <seqan/basic.h>
@@ -47,7 +47,9 @@ using namespace seqan;
 template <typename TLimits>
 unsigned getRealPos (TLimits lim, bool pattern,	unsigned dislexPos)
 {
-	typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
+	typedef GappedShape<HardwiredShape<1,2> > TInsideShape;
+	
+	typedef CyclicShape<FixedShape<0,TInsideShape, 0> > TShape;
 	typedef Pair<unsigned, unsigned> TUPair;
 	typedef DislexReverseTransformMulti_<unsigned,
 	TLimits, TUPair >                             TGetDislexReversePos;
@@ -89,7 +91,6 @@ void printUnsignedString(String<unsigned> st)
         // signed characters behave different than unsigned when compared
         // to get the same index with signed or unsigned chars we simply cast them to unsigned
         // before feeding them into the pipeline
-        //typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
         typedef typename Concatenator<StringSet<TString, TSpec> >::Type            TConcat;
         typedef typename MakeUnsigned_< typename Value<TConcat>::Type >::Type    TUValue;
         typedef typename StringSetLimits<StringSet<TString, TSpec> >::Type TLimits;
@@ -122,21 +123,22 @@ void printUnsignedString(String<unsigned> st)
 
 // Program entry point.
 
-#include <seqan/seq_io.h>
-#include <seqan/sequence.h>
-#include <seqan/index.h>
-#include <seqan/modifier.h>
-#include <random>	
 
 using namespace seqan;
 
 int main(int argc, char *argv[])
 {
+		//IMPORTANT VARIABLES
 		unsigned readStartPos = atoi(argv[1]);
 		unsigned readLength = atoi(argv[2]);
 		double readErrorRate = atof(argv[3]);
 	
-	unsigned klen = 10; // length of k-mere devision in pattern
+	unsigned klen = 1; // length of k-mere devision in pattern
+	
+	typedef GappedShape<HardwiredShape<1,1> > TInsideShape;	
+	typedef CyclicShape<FixedShape<0,TInsideShape, 1> > TShape;
+	
+	// 
 	
 	CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
 	Dna5String seqIn;
@@ -147,7 +149,7 @@ int main(int argc, char *argv[])
     char outpath [256];
 	sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%.2f.fasta",readStartPos,readLength,readErrorRate);
 	CharString readFileName = getAbsolutePath(outpath);
-    SeqFileIn seqFileIn(toCString(readFileName));
+    SeqFileIn seqFileIn(toCString(seqFileName));
     readRecord(id, seqIn, seqFileIn);
     SeqFileIn readFileIn(toCString(readFileName));
     readRecord(id, readIn, readFileIn);
@@ -156,8 +158,9 @@ int main(int argc, char *argv[])
     appendValue(seqs, seqIn);
     appendValue(seqs, readIn);
 	std::cout << "READ!" << std::endl;
+	
+		// TRANSLATING INTO DISLEX
 
-			typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
             typedef Index<StringSet<Dna5String> > TIndex;
 			typedef typename StringSetLimits<StringSet<Dna5String> >::Type TLimits;
 			typedef Pair<unsigned, unsigned> TUPair;			
@@ -165,22 +168,24 @@ int main(int argc, char *argv[])
             String <unsigned> dislex;
 			_makeDislexString(dislex, indexSA(index), indexText(index), DislexExternal<TShape, Skew7>());
 			
-			std::cout << "zrezz!" << std::endl;
 
 			TLimits lim = stringSetLimits(seqs);
-			printUnsignedString(dislex);
+			//printUnsignedString(dislex);
 			
-			std::cout << length(dislex);
+			std::cout << length(dislex) << std::endl;
+			
+			
 			String <unsigned> seq = prefix(dislex, posGlobalize(TUPair(1,0),lim));
 			String <unsigned> read = suffix(dislex, posGlobalize(TUPair(1,0),lim));
-			printUnsignedString(seq);
-			printUnsignedString(read);
+
+			//printUnsignedString(seq);
+			//printUnsignedString(read);
 			std::cout << length(seq) << std::endl;
 			std::cout << length(read) << std::endl;
 			
 				// BUILDING INDEX
 				typedef Index<String<unsigned>, IndexSa<> > TSAIndex;
-				TSAIndex saindex(dislex);
+				TSAIndex saindex(seq);
 				std::cout << "DONE!";
 				Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
 				std::cout << "DONE!";				
@@ -191,7 +196,6 @@ int main(int argc, char *argv[])
 				
 				for (unsigned ki=0; ki<(length(read)/klen);++ki)
 				{
-					std::cout << "klen: " <<klen << std::endl;
 					unsigned compareStartpos = ki*klen;
 					if (!goDown(sait, infixWithLength(read, (compareStartpos), klen))) // compare full k-mere
 					{
@@ -213,9 +217,10 @@ int main(int argc, char *argv[])
 					bool found = 0;
 					for (unsigned i=0; i<countOccurrences(sait); ++i)
 					{
+						std::cout << "DISPOS " << (getOccurrences(sait)[i]) << std::endl;
 						unsigned findPos = getRealPos(lim,0,(getOccurrences(sait)[i]));
 						
-						std::cout << ki << " : " << findPos << "\t";
+						std::cout << ki << " : " << findPos << std::endl << std::endl;
 						if (findPos == readStartPos+getRealPos(lim,1,ki*klen))
 						{
 							found = 1;

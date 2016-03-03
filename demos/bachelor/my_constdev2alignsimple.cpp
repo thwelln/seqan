@@ -47,8 +47,10 @@ using namespace seqan;
 template <typename TLimits>
 unsigned getRealPos (TLimits lim, bool pattern,	unsigned dislexPos)
 {
+	typedef GappedShape<HardwiredShape<1,1> > TInsideShape;
+	
 	//typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
-	typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,1> >, 1> > TShape;
+	typedef CyclicShape<FixedShape<0,TInsideShape, 1> > TShape;
 	typedef Pair<unsigned, unsigned> TUPair;
 	typedef DislexReverseTransformMulti_<unsigned,
 	TLimits, TUPair >                             TGetDislexReversePos;

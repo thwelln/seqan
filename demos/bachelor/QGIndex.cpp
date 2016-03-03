@@ -8,14 +8,15 @@ using namespace seqan;
 
 int main(int argc, char *argv[])
 {
-		//IMPORTANT VARIABLES
+	// IMPORTANT VARIABLES
+	
 		unsigned readStartPos = atoi(argv[1]);
 		unsigned readLength = atoi(argv[2]);
 		double readErrorRate = atof(argv[3]);
 	
+	typedef GappedShape<HardwiredShape<1,1> > TInsideShape;
 	
-	
-	unsigned klen = 10; // length of k-mere devision in pattern
+	unsigned klen = 3; // length of k-mere devision in pattern
 	
 	//READ FILES IN
 	
@@ -32,16 +33,14 @@ int main(int argc, char *argv[])
     SeqFileIn readFileIn(toCString(readFileName));
     readRecord(id, read, readFileIn);    
     
-	//reverse(read);
 	
 	std::cout << "READYYYY!" << std::endl;
 	
 	// BUILDING INDEX
 	
-	typedef Index<Dna5String, IndexSa<> > TSAIndex;
-	TSAIndex saindex(seq);
+	Index<Dna5String, IndexQGram<TInsideShape> > qgindex(seq);
+    //stringToShape(indexShape(qgindex), "111");
 	
-	Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
 	//SEARCHING
 	unsigned tp = 0;
 	unsigned fn = 0;
@@ -50,29 +49,14 @@ int main(int argc, char *argv[])
 	for (unsigned ki=0; ki<(length(read)/klen);++ki)
 	{
 		unsigned compareStartpos = ki*klen;
-		if (!goDown(sait, infixWithLength(read, (compareStartpos), klen))) // compare full k-mere
-		{
-			std::cout << "FN!" << std::endl;
-			goRoot(sait);
-			++fn;
-			continue;
-		}
-		unsigned compareLength = klen;
-		while (countOccurrences(sait)>1 && compareStartpos+compareLength<length(read))
-		{
-			if (!goDown(sait, read[compareStartpos+compareLength])) // compare next letter
-			{
-				//std::cout << "ERROR!" <<std::endl;
-				break;
-			}
-		++compareLength;
-		}
+		Dna5String qgram = infixWithLength(read, (compareStartpos), klen);
+		hash(indexShape(qgindex), begin(qgram));
 		bool found = 0;
-		for (unsigned i=0; i<countOccurrences(sait); ++i)
+		for (unsigned i=0; i<length(getOccurrences(qgindex, indexShape(qgindex))); ++i)
 		{
-			unsigned findPos = getOccurrences(sait)[i];
+			unsigned findPos = getOccurrences(qgindex, indexShape(qgindex))[i];
 			
-			std::cout << ki << " : " << findPos << "\t";
+			//std::cout << ki << " : " << findPos << "\t";
 			if (findPos == readStartPos+ki*klen)
 			{
 				found = 1;
@@ -90,8 +74,7 @@ int main(int argc, char *argv[])
 		{
 			++fn;
 		}
-		goRoot(sait);
-		std::cout << std::endl;
+		//std::cout << std::endl;
 	}
 	std::cout << std::endl;
 	std::cout << "TP:	" << tp << std::endl;
