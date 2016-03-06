@@ -14,9 +14,9 @@ int main(int argc, char *argv[])
 		unsigned readLength = atoi(argv[2]);
 		double readErrorRate = atof(argv[3]);
 	
-	typedef GappedShape<HardwiredShape<1,1> > TInsideShape;
+	typedef GappedShape<HardwiredShape<2,2,3,2> > TInsideShape;	
 	
-	unsigned klen = 3; // length of k-mere devision in pattern
+	unsigned klen = 10; // length of k-mere devision in pattern
 	
 	//READ FILES IN
 	

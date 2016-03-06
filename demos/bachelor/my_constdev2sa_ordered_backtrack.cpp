@@ -29,7 +29,7 @@
 // DAMAGE.
 //
 // ==========================================================================
-// Author: Sascha Meiers <meiers@inf.fu-berlin.de>
+// Author: Thimo Wellner <thimo.wellner@fu-berlin.de> (Modified from Sascha Meiers)
 // ==========================================================================
 
 #include <seqan/basic.h>
@@ -44,21 +44,78 @@
 
 using namespace seqan;
 
-template <typename TLimits>
-unsigned getRealPos (TLimits lim, bool pattern,	unsigned dislexPos)
+
+template <typename TIterator>
+int backtrack(const String<unsigned> & read, TIterator it, unsigned errors, const unsigned & windowStart, unsigned compareLevel, unsigned & maxLevel, String<unsigned> & occ, const unsigned & sigma)
 {
-	typedef GappedShape<HardwiredShape<1,1> > TInsideShape;
-	
-	//typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
-	typedef CyclicShape<FixedShape<0,TInsideShape, 1> > TShape;
-	typedef Pair<unsigned, unsigned> TUPair;
-	typedef DislexReverseTransformMulti_<unsigned,
-	TLimits, TUPair >                             TGetDislexReversePos;
-	
-		unsigned fullDisPos = posGlobalize(TUPair(pattern,dislexPos), lim);
-		TUPair pair = TGetDislexReversePos(TShape::span,lim) (fullDisPos);
-		//std::cout << fullDisPos << pair << std::endl;
-		return pair.i2;
+	//std::cout << "CALL Level" << compareLevel << "ERRORS " << errors << std::endl;
+	if(windowStart+compareLevel>=length(read))
+	{
+		return -1;
+	}
+	if (errors == 0)
+	{
+		if (!goDown(it, read[windowStart+compareLevel]))
+		{
+			if (maxLevel < compareLevel)
+			{
+				clear(occ);
+				append(occ,getOccurrences(it));
+				maxLevel = compareLevel;
+				//std::cout << "NEW MAX " << maxLevel << " ";
+				//printUnsignedString(occ);
+			}
+			else if (maxLevel == compareLevel)
+			{
+				append(occ,getOccurrences(it));
+				//std::cout << "MAX REACHED " << maxLevel << " ";
+				//printUnsignedString(occ);		
+			}
+			return 0;
+		}
+		else
+		{
+			backtrack(read, it, 0, windowStart, (compareLevel+1), maxLevel, occ, sigma);
+			return 0;
+		}
+	}
+	else
+	{
+		for (unsigned i = 0; i < sigma; i++)
+		{
+			//std::cout << "!!!" << std::endl;
+			TIterator it2 = it;
+			unsigned errors2 = errors;
+			if (read[windowStart+compareLevel] != i)
+			{
+				--errors2;
+			}
+			if (!goDown(it2, i))
+			{
+				if (maxLevel < compareLevel)
+				{
+					clear(occ);
+					append(occ,getOccurrences(it));
+					maxLevel = compareLevel;
+					//std::cout << "NEW MAX " << maxLevel << " ";
+					//printUnsignedString(occ);
+					
+					
+				}
+				else if (maxLevel == compareLevel)
+				{
+					append(occ,getOccurrences(it));
+					//std::cout << "MAX REACHED " << maxLevel << " ";
+					//printUnsignedString(occ);			
+				}
+			}
+			else
+			{
+				backtrack(read, it2, errors2, windowStart, (compareLevel+1), maxLevel, occ, sigma);
+			}			
+		}
+	}
+	return 0;
 }
 
 void printUnsignedString(String<unsigned> st)
@@ -84,6 +141,7 @@ void printUnsignedString(String<unsigned> st)
         typename TAlgSpec >
     void _makeDislexString(
         String <unsigned> &dis,
+        unsigned & sig,
         TSA &suffixArray,
         StringSet<TString, TSpec> const &stringSet,
         TAlgSpec const)
@@ -92,7 +150,6 @@ void printUnsignedString(String<unsigned> st)
         // signed characters behave different than unsigned when compared
         // to get the same index with signed or unsigned chars we simply cast them to unsigned
         // before feeding them into the pipeline
-        //typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
         typedef typename Concatenator<StringSet<TString, TSpec> >::Type            TConcat;
         typedef typename MakeUnsigned_< typename Value<TConcat>::Type >::Type    TUValue;
         typedef typename StringSetLimits<StringSet<TString, TSpec> >::Type TLimits;
@@ -112,6 +169,7 @@ void printUnsignedString(String<unsigned> st)
         unsigner_t  unsigner(src);
         creator_t    creator(unsigner, stringSetLimits(stringSet));
 		dis = creator.dislexString_ordered;
+		sig = creator.sigma;
 		
         //suffixArray << creator;
 
@@ -125,21 +183,23 @@ void printUnsignedString(String<unsigned> st)
 
 // Program entry point.
 
-#include <seqan/seq_io.h>
-#include <seqan/sequence.h>
-#include <seqan/index.h>
-#include <seqan/modifier.h>
-#include <random>	
 
 using namespace seqan;
 
 int main(int argc, char *argv[])
 {
+		//IMPORTANT VARIABLES
 		unsigned readStartPos = atoi(argv[1]);
 		unsigned readLength = atoi(argv[2]);
 		double readErrorRate = atof(argv[3]);
+		unsigned allowedErrors = atoi(argv[4]);
 	
-	unsigned klen = 2; // length of k-mere devision in pattern
+	unsigned klen = 10; // length of k-mere devision in pattern
+	
+	typedef GappedShape<HardwiredShape<2,2,3,2> > TInsideShape;	
+	typedef CyclicShape<FixedShape<0,TInsideShape, 0> > TShape;
+	
+	// 
 	
 	CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
 	Dna5String seqIn;
@@ -150,59 +210,102 @@ int main(int argc, char *argv[])
     char outpath [256];
 	sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%.2f.fasta",readStartPos,readLength,readErrorRate);
 	CharString readFileName = getAbsolutePath(outpath);
-    SeqFileIn seqFileIn(toCString(readFileName));
+    SeqFileIn seqFileIn(toCString(seqFileName));
     readRecord(id, seqIn, seqFileIn);
-    //SeqFileIn readFileIn(toCString(readFileName));
-    //readRecord(id, readIn, readFileIn);
-    
-    readIn = infixWithLength(seqIn, 60, 80);
+    SeqFileIn readFileIn(toCString(readFileName));
+    readRecord(id, readIn, readFileIn);
     
     StringSet<seqan::Dna5String> seqs;
     appendValue(seqs, seqIn);
     appendValue(seqs, readIn);
-	std::cout << "READ!" << std::endl;
+	std::cout << "READ!" << std::endl <<std::endl;
+	
+		// TRANSLATING INTO DISLEX
 
-			//typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,4,3,2,1,1> >, 1> > TShape;
-			typedef CyclicShape<FixedShape<0,GappedShape<HardwiredShape<1,1> >, 1> > TShape;
             typedef Index<StringSet<Dna5String> > TIndex;
 			typedef typename StringSetLimits<StringSet<Dna5String> >::Type TLimits;
 			typedef Pair<unsigned, unsigned> TUPair;			
             TIndex index(seqs);
             String <unsigned> dislex;
-			_makeDislexString(dislex, indexSA(index), indexText(index), DislexExternal<TShape, Skew7>());
+			unsigned sigma;
+			_makeDislexString(dislex, sigma, indexSA(index), indexText(index), DislexExternal<TShape, Skew7>());
 			
-			std::cout << "zrezz!" << std::endl;
 
 			TLimits lim = stringSetLimits(seqs);
 			//printUnsignedString(dislex);
 			
-			std::cout << length(dislex) << std::endl;
+			//std::cout << length(dislex) << std::endl;
 			
-			String <unsigned> seq = prefix(dislex, 200);
-			String <unsigned> read = suffix(dislex, 200);
+			
+			String <unsigned> seq = prefix(dislex, posGlobalize(TUPair(1,0),lim));
+			String <unsigned> read = suffix(dislex, posGlobalize(TUPair(1,0),lim));
+
+
 			//printUnsignedString(seq);
 			//printUnsignedString(read);
-			std::cout << length(seq) << std::endl;
-			std::cout << length(read) << std::endl;
+			//std::cout << length(seq) << std::endl;
+			//std::cout << length(read) << std::endl;
 			
-			
-			typedef Align<Dna5String, ArrayGaps> TAlignDna;      // align type
-			TAlignDna align;
-			resize(rows(align), 2);
-			assignSource(row(align, 0), seqIn);
-			assignSource(row(align, 1), readIn);
-			int score = globalAlignment(align, Score<int, Simple>(1, 0, 0,-1));
-			std::cout << "Score: " << score << std::endl;
-			std::cout << align << std::endl;
+				// BUILDING INDEX
+				typedef Index<String<unsigned>, IndexSa<> > TSAIndex;
+				TSAIndex saindex(seq);
+				//std::cout << "DONE!";
+				Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
+				//std::cout << "DONE!";				
+				//SEARCHING
+				unsigned tp = 0;
+				unsigned fn = 0;
+				unsigned fp = 0;
 				
-			typedef Align<String<unsigned>, ArrayGaps> TAlignU;      // align type
-			TAlignU align2;
-			resize(rows(align2), 2);
-			assignSource(row(align2, 0), seq);
-			assignSource(row(align2, 1), read);
-			int score2 = globalAlignment(align2, Score<int, Simple>(1, 0, 0,-1));
-			std::cout << "Score: " << score2 << std::endl;
-			std::cout << align2 << std::endl;
+	
+				for (unsigned ki=0; ki<(length(read)/klen);++ki)
+				{
+					unsigned compareStartpos = ki*klen;
+					
+					String <unsigned> occs;
+					unsigned maxL = 0;
+				
+					backtrack(read, sait, allowedErrors, compareStartpos, 0, maxL, occs,sigma);
+			
+					if (maxL == 0)
+					{
+						fn++;
+					}
+					else
+					{
+						bool found = 0;
+						for (unsigned i=0; i<length(occs); ++i)
+						{
+							unsigned findPos = occs[i];
+							
+							//std::cout << ki << " : " << findPos << "\t";
+							if (findPos == readStartPos+ki*klen)
+							{
+								found = 1;
+							}
+							else
+							{
+								++fp;
+							}
+						}
+						if (found)
+						{
+							++tp;
+						}
+						else
+						{
+							++fn;
+						}
+					}
+					goRoot(sait);
+					//std::cout << std::endl;
+				}
+				//OUTPUT
+				std::cout << std::endl;
+				std::cout << "TP:	" << tp << std::endl;
+				std::cout << "FN:	" << fn << std::endl;
+				std::cout << "FP:	" << fp << std::endl;	
+			
 				
     return 0;
 }

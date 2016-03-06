@@ -135,8 +135,8 @@ int main(int argc, char *argv[])
 	
 	unsigned klen = 1; // length of k-mere devision in pattern
 	
-	typedef GappedShape<HardwiredShape<1,1> > TInsideShape;	
-	typedef CyclicShape<FixedShape<0,TInsideShape, 1> > TShape;
+	typedef GappedShape<HardwiredShape<2,2,3,2> > TInsideShape;	
+	typedef CyclicShape<FixedShape<0,TInsideShape, 0> > TShape;
 	
 	// 
 	
@@ -217,10 +217,10 @@ int main(int argc, char *argv[])
 					bool found = 0;
 					for (unsigned i=0; i<countOccurrences(sait); ++i)
 					{
-						std::cout << "DISPOS " << (getOccurrences(sait)[i]) << std::endl;
+						//std::cout << "DISPOS " << (getOccurrences(sait)[i]) << std::endl;
 						unsigned findPos = getRealPos(lim,0,(getOccurrences(sait)[i]));
 						
-						std::cout << ki << " : " << findPos << std::endl << std::endl;
+						//std::cout << ki << " : " << findPos << std::endl << std::endl;
 						if (findPos == readStartPos+getRealPos(lim,1,ki*klen))
 						{
 							found = 1;
@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
 						++fn;
 					}
 					goRoot(sait);
-					std::cout << std::endl;
+					//std::cout << std::endl;
 				}
 				std::cout << std::endl;
 				std::cout << "TP:	" << tp << std::endl;

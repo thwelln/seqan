@@ -251,6 +251,57 @@ struct DislexMapMulti_ :
     }
 };
 
+// --------------------------------------------------------------------------
+// Functor OrderedTransformMulti_ (Map Text -> Ordered)            [StringSet]
+// --------------------------------------------------------------------------
+
+// dislex transformation for multiple strings
+// takes a Pair (seq,pos) and returns L(seq,pos) = pos
+template <typename TValue,
+          typename TString, typename TResult = typename Value<TValue, 2>::Type>
+struct OrderedTransformMulti_ :
+    public std::unary_function<TValue, TResult>
+{
+    TString const & _limits;
+    TResult const _s;
+
+    OrderedTransformMulti_(TResult s, TString const & strSetLimits) :
+        _limits(strSetLimits), _s(s)
+    {}
+
+    inline TResult operator() (const TValue & x) const
+    {
+        
+        return posGlobalize(x, _limits);
+    }
+};
+
+// --------------------------------------------------------------------------
+// Order functor from text to lexText                           [StringSet]
+// --------------------------------------------------------------------------
+
+// dislex transformation used in the mapper pool
+// takes a Pair( Pair(s,p), ACGATCG), where s is the seq id and p the suffix position,
+// returns a global position L(s,p)=pos
+template <typename TValue,
+          typename Tlimits,
+          typename TResult = typename Value<typename Value<TValue, 1>::Type, 2>::Type >
+struct OrderedMapMulti_ :
+    public std::unary_function<TValue, TResult>
+{
+    typedef typename Value<TValue, 1>::Type TPair;
+    typedef typename Value<TPair, 2>::Type TSize;
+
+    OrderedTransformMulti_<TPair, Tlimits> formula;
+    
+    OrderedMapMulti_(TResult S_, Tlimits const & stringSetLimits) : formula(S_, stringSetLimits)
+    {}
+    
+    inline TResult operator() (const TValue & x) const
+    {
+        return formula(x.i1);
+    }
+};
 
 // --------------------------------------------------------------------------
 // Pipe Dislex                                                    [StringSet]
@@ -278,6 +329,19 @@ struct Pipe<TInput, Multi<DislexExternal<TShape, TSACA>, TPair, TLimits> >
 
     typedef Pipe< TPoolMapper, Filter<
             filterI2<TypeOf_(TPoolMapper)> > >                  TPipeFilterI2;
+            
+            
+            
+    typedef OrderedMapMulti_<TypeOf_(TPipeNamer), TLimits>       TOrderedMapper;
+    typedef Pool< TypeOf_(TPipeNamer), MapperSpec<
+            MapperConfigSize< TOrderedMapper,
+            TSizeOf_(TPipeNamer) > > >                          TOrderedPoolMapper;
+
+    typedef Pipe< TOrderedPoolMapper, Filter<
+            filterI2<TypeOf_(TOrderedPoolMapper)> > >                  TOrderedFilterI2;
+            
+            
+            
     typedef Pipe<TPipeFilterI2, TSACA>                          TPipeSACA;
     typedef DislexReverseTransformMulti_<TypeOf_(TPipeSACA),
             TLimits, TypeOf_(Pipe)>                             TDislexReverse;
@@ -347,11 +411,15 @@ struct Pipe<TInput, Multi<DislexExternal<TShape, TSACA>, TPair, TLimits> >
         TDislexMapper                                           _map(TShape::span, _limits);
         TPoolMapper                                             mapper(namer, _map);
         
-        TDislexMapper                                           _map_ordered(TShape::span, _limits);
-        TPoolMapper                                             mapper_ordered(namer, _map);
+        TOrderedMapper                                           _map_ordered(TShape::span, _limits);
+        TOrderedPoolMapper                                             mapper_ordered(namer, _map_ordered);
+        
+        //std::cout << namer << std::endl << std::endl;
         
         mapper << namer;
         mapper_ordered << namer;
+        
+        //std::cout << mapper_ordered << std::endl;
         
         sigma = (namer.tmp.i2 +1);
 
@@ -362,7 +430,7 @@ struct Pipe<TInput, Multi<DislexExternal<TShape, TSACA>, TPair, TLimits> >
 
         // 5. Discard positions, keep rank
 		TPipeFilterI2 filter(mapper);
-		TPipeFilterI2 filter_ordered(mapper);
+		TOrderedFilterI2 filter_ordered(mapper_ordered);
 				
 		dislexString << filter;
 		dislexString_ordered << filter_ordered;
