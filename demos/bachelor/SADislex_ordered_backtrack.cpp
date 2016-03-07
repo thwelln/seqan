@@ -221,7 +221,8 @@ int main(int argc, char *argv[])
 	std::cout << "READ!" << std::endl <<std::endl;
 	
 		// TRANSLATING INTO DISLEX
-
+			double tim = sysTime();
+			
             typedef Index<StringSet<Dna5String> > TIndex;
 			typedef typename StringSetLimits<StringSet<Dna5String> >::Type TLimits;
 			typedef Pair<unsigned, unsigned> TUPair;			
@@ -239,7 +240,7 @@ int main(int argc, char *argv[])
 			
 			String <unsigned> seq = prefix(dislex, posGlobalize(TUPair(1,0),lim));
 			String <unsigned> read = suffix(dislex, posGlobalize(TUPair(1,0),lim));
-
+			std::cout  << sysTime() - tim << std::endl;
 
 			//printUnsignedString(seq);
 			//printUnsignedString(read);
@@ -247,17 +248,24 @@ int main(int argc, char *argv[])
 			//std::cout << length(read) << std::endl;
 			
 				// BUILDING INDEX
+				double tim = sysTime();
+							
 				typedef Index<String<unsigned>, IndexSa<> > TSAIndex;
 				TSAIndex saindex(seq);
 				//std::cout << "DONE!";
 				Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
 				//std::cout << "DONE!";				
 				//SEARCHING
+				goDown(sait, 10);
+				goRoot(sait);
+				std::cout  << sysTime() - tim << std::endl;
+				
 				unsigned tp = 0;
 				unsigned fn = 0;
 				unsigned fp = 0;
 				
-	
+				double tim = sysTime();
+
 				for (unsigned ki=0; ki<(length(read)/klen);++ki)
 				{
 					unsigned compareStartpos = ki*klen;
@@ -301,10 +309,10 @@ int main(int argc, char *argv[])
 					//std::cout << std::endl;
 				}
 				//OUTPUT
-				std::cout << std::endl;
-				std::cout << "TP:	" << tp << std::endl;
-				std::cout << "FN:	" << fn << std::endl;
-				std::cout << "FP:	" << fp << std::endl;	
+				std::cout  << sysTime() - tim << std::endl;
+				std::cout << tp << std::endl;
+				std::cout << fn << std::endl;
+				std::cout << fp << std::endl;	
 			
 				
     return 0;

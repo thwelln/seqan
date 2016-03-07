@@ -2,7 +2,9 @@
 #include <seqan/sequence.h>
 #include <seqan/index.h>
 #include <seqan/modifier.h>
-#include <random>	
+#include <random>
+
+#include <time.h>
 
 using namespace seqan;
 
@@ -33,19 +35,21 @@ int main(int argc, char *argv[])
     SeqFileIn readFileIn(toCString(readFileName));
     readRecord(id, read, readFileIn);    
     
-	
-	std::cout << "READYYYY!" << std::endl;
+
 	
 	// BUILDING INDEX
-	
+	std::cout << 0 << std::endl;
+	double tim = sysTime();
 	Index<Dna5String, IndexQGram<TInsideShape> > qgindex(seq);
     //stringToShape(indexShape(qgindex), "111");
+    hash(indexShape(qgindex),begin("AAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+    std::cout  << sysTime() - tim << std::endl;
 	
 	//SEARCHING
 	unsigned tp = 0;
 	unsigned fn = 0;
 	unsigned fp = 0;
-	
+	tim = sysTime();
 	for (unsigned ki=0; ki<(length(read)/klen);++ki)
 	{
 		unsigned compareStartpos = ki*klen;
@@ -76,10 +80,10 @@ int main(int argc, char *argv[])
 		}
 		//std::cout << std::endl;
 	}
-	std::cout << std::endl;
-	std::cout << "TP:	" << tp << std::endl;
-	std::cout << "FN:	" << fn << std::endl;
-	std::cout << "FP:	" << fp << std::endl;	
+    std::cout  << sysTime() - tim << std::endl;	
+	std::cout << tp << std::endl;
+	std::cout << fn << std::endl;
+	std::cout << fp << std::endl;	
 		
 	return 0;
 }

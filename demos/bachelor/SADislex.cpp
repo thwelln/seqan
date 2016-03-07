@@ -172,28 +172,30 @@ int main(int argc, char *argv[])
 			TLimits lim = stringSetLimits(seqs);
 			//printUnsignedString(dislex);
 			
-			std::cout << length(dislex) << std::endl;
+			//std::cout << length(dislex) << std::endl;
 			
 			
 			String <unsigned> seq = prefix(dislex, posGlobalize(TUPair(1,0),lim));
 			String <unsigned> read = suffix(dislex, posGlobalize(TUPair(1,0),lim));
-
+			 std::cout  << sysTime() - tim << std::endl;
 			//printUnsignedString(seq);
 			//printUnsignedString(read);
-			std::cout << length(seq) << std::endl;
-			std::cout << length(read) << std::endl;
+			//std::cout << length(seq) << std::endl;
+			//std::cout << length(read) << std::endl;
 			
 				// BUILDING INDEX
+				double tim = sysTime();				
 				typedef Index<String<unsigned>, IndexSa<> > TSAIndex;
 				TSAIndex saindex(seq);
-				std::cout << "DONE!";
 				Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
-				std::cout << "DONE!";				
+				goDown(sait, "A");
+				goRoot(sait);
+				std::cout  << sysTime() - tim << std::endl;		
 				//SEARCHING
 				unsigned tp = 0;
 				unsigned fn = 0;
 				unsigned fp = 0;
-				
+				double tim = sysTime();
 				for (unsigned ki=0; ki<(length(read)/klen);++ki)
 				{
 					unsigned compareStartpos = ki*klen;
@@ -241,10 +243,10 @@ int main(int argc, char *argv[])
 					goRoot(sait);
 					//std::cout << std::endl;
 				}
-				std::cout << std::endl;
-				std::cout << "TP:	" << tp << std::endl;
-				std::cout << "FN:	" << fn << std::endl;
-				std::cout << "FP:	" << fp << std::endl;	
+				std::cout  << sysTime() - tim << std::endl;	
+				std::cout << tp << std::endl;
+				std::cout << fn << std::endl;
+				std::cout << fp << std::endl;	
 			
 				
     return 0;

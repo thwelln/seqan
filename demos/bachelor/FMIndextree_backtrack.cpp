@@ -117,21 +117,27 @@ int main(int argc, char *argv[])
 
 	reverse(read); //ONLY FOR FM
 	
-	std::cout << "READYYYY!" << std::endl;
 
 // BUILDING INDEX
 
-	
+	std::cout  << 0 << std::endl;
+	double tim = sysTime();
 	typedef Index<Dna5String, FMIndex<> > TFMIndex;
 	TFMIndex fmindex(seq);
 	
 	Iterator<TFMIndex, TopDown<> >::Type fmit(fmindex);
+	
+	goDown(fmit, "A");
+	goRoot(fmit);
+	std::cout  << sysTime() - tim << std::endl;
 	
 // SEARCHING
 	
 	unsigned tp = 0;
 	unsigned fn = 0;
 	unsigned fp = 0;
+	
+	double tim = sysTime();
 	
 	for (unsigned ki=0; ki<(length(read)/klen);++ki)
 	{
@@ -178,11 +184,11 @@ int main(int argc, char *argv[])
 		//std::cout << std::endl;
 	}
 	
-	// OUTPUT
-	std::cout << std::endl;
-	std::cout << "TP:	" << tp << std::endl;
-	std::cout << "FN:	" << fn << std::endl;
-	std::cout << "FP:	" << fp << std::endl;	
+	//OUTPUT
+	std::cout  << sysTime() - tim << std::endl;
+	std::cout << tp << std::endl;
+	std::cout << fn << std::endl;
+	std::cout << fp << std::endl;	
 		
 	return 0;
 }
