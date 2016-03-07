@@ -6,16 +6,6 @@
 
 using namespace seqan;
 
-void printUnsignedString(String<unsigned> st)
-{
-	std::cout << "[";
-	for (unsigned i=0; i<length(st); i++)
-	{
-		std::cout << st[i] << ", ";
-	}
-	std::cout << "]" << std::endl;
-}
-
 template <typename TIterator>
 int backtrack(const Dna5String & read, TIterator & it, unsigned errors, const unsigned & windowStart, unsigned & maxLevel, String<unsigned> & occ)
 {
@@ -93,22 +83,96 @@ int backtrack(const Dna5String & read, TIterator & it, unsigned errors, const un
 	return 0;
 }
 
+
 int main(int argc, char *argv[])
 {
-	Dna5String seq = "ACGAACTATAG";
-	Dna5String read = "ANNNNTAGTACG";
-
-	typedef Index<Dna5String, IndexSa<> > TSAIndex;	
-	//typedef Index<Dna5String, FMIndex<> > TSAIndex;
+		//IMPORTANT VARIABLES
+		unsigned readStartPos = atoi(argv[1]);
+		unsigned readLength = atoi(argv[2]);
+		double readErrorRate = atof(argv[3]);
+		unsigned allowedErrors = atoi(argv[4]);
+	
+	
+	
+	unsigned klen = 10; // length of k-mere devision in pattern
+	
+	//READ FILES IN
+	
+	CharString seqFileName = getAbsolutePath("/../Sequences/sequence.fasta");
+	Dna5String seq;
+	Dna5String read;
+	CharString id;
+    SeqFileIn seqFileIn(toCString(seqFileName));
+    readRecord(id, seq, seqFileIn);
+    
+    char outpath [256];
+	sprintf(outpath, "/../Sequences/Reads/read_%d_%d_%.2f.fasta",readStartPos,readLength,readErrorRate);
+	CharString readFileName = getAbsolutePath(outpath);  
+    SeqFileIn readFileIn(toCString(readFileName));
+    readRecord(id, read, readFileIn);    
+    
+	//reverse(read);
+	
+	std::cout << "READYYYY!" << std::endl;
+	
+	// BUILDING INDEX
+	
+	typedef Index<Dna5String, IndexSa<> > TSAIndex;
 	TSAIndex saindex(seq);
 	
-	Iterator<TSAIndex, TopDown<ParentLinks<>> >::Type sait(saindex);
+	Iterator<TSAIndex, TopDown<ParentLinks<> > >::Type sait(saindex);
+	//SEARCHING
+	unsigned tp = 0;
+	unsigned fn = 0;
+	unsigned fp = 0;
 	
-	String <unsigned> occs;
-	unsigned maxL = 0;
+	for (unsigned ki=0; ki<(length(read)/klen);++ki)
+	{
+		unsigned compareStartpos = ki*klen;
+		
+		String <unsigned> occs;
+		unsigned maxL = 0;
 	
-	backtrack(read, sait, 2, 0, maxL, occs);
-	printUnsignedString(occs);
-	
+		backtrack(read, sait, allowedErrors, compareStartpos, maxL, occs);
+
+		if (maxL < klen)
+		{
+			fn++;
+		}
+		else
+		{
+			bool found = 0;
+			for (unsigned i=0; i<length(occs); ++i)
+			{
+				unsigned findPos = occs[i];
+				
+				//std::cout << ki << " : " << findPos << "\t";
+				if (findPos == readStartPos+ki*klen)
+				{
+					found = 1;
+				}
+				else
+				{
+					++fp;
+				}
+			}
+			if (found)
+			{
+				++tp;
+			}
+			else
+			{
+				++fn;
+			}
+		}
+		goRoot(sait);
+		//std::cout << std::endl;
+	}
+	//OUTPUT
+	std::cout << std::endl;
+	std::cout << "TP:	" << tp << std::endl;
+	std::cout << "FN:	" << fn << std::endl;
+	std::cout << "FP:	" << fp << std::endl;	
+		
 	return 0;
 }
