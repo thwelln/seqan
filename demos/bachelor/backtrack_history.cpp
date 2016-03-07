@@ -19,8 +19,8 @@ void printUnsignedString(String<unsigned> st)
 template <typename TIterator>
 int backtrack(const Dna5String & read, TIterator & it, unsigned errors, const unsigned & windowStart, unsigned & maxLevel, String<unsigned> & occ)
 {
-	std::cout << "CALL Level" << compareLevel << "ERRORS " << errors << std::endl;
 	unsigned compareLevel = nodeDepth(it);
+	std::cout << "CALL Level" << compareLevel << "ERRORS " << errors << std::endl;
 	if(windowStart+compareLevel>=length(read))
 	{
 		return -1;
