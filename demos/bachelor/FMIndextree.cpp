@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 			++fn;
 		}
 		goRoot(fmit);
-		std::cout << std::endl;
+		//std::cout << std::endl;
 	}
 	
 // OUTPUT
