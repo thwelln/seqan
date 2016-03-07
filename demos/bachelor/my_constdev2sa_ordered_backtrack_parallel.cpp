@@ -56,9 +56,9 @@ int backtrack(const String<unsigned> & read, TIterator it, unsigned errors, cons
 	}
 	if (errors == 0)
 	{
-		#pragma omp critical
-		{
-			if (!goDown(it, read[windowStart+compareLevel]))
+		if (!goDown(it, read[windowStart+compareLevel]))
+		{		
+			#pragma omp critical
 			{
 				if (maxLevel < compareLevel)
 				{
@@ -74,8 +74,8 @@ int backtrack(const String<unsigned> & read, TIterator it, unsigned errors, cons
 					//std::cout << "MAX REACHED " << maxLevel << " ";
 					//printUnsignedString(occ);		
 				}
-				return 0;
 			}
+		return 0;
 		}
 		else
 		{
