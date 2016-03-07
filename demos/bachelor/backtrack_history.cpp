@@ -47,7 +47,7 @@ int backtrack(const Dna5String & read, TIterator & it, unsigned errors, const un
 		}
 		else
 		{
-			backtrack(read, it, 0, windowStart, (compareLevel+1), maxLevel, occ);
+			backtrack(read, it, 0, windowStart, maxLevel, occ);
 			goUp(it);
 			return 0;
 		}
@@ -85,7 +85,7 @@ int backtrack(const Dna5String & read, TIterator & it, unsigned errors, const un
 			}
 			else
 			{
-				backtrack(read, it2, errors2, windowStart, (compareLevel+1), maxLevel, occ);
+				backtrack(read, it2, errors2, windowStart, maxLevel, occ);
 			}			
 		}
 		goUp(it);
