@@ -17,30 +17,30 @@ int backtrack(const Dna5String & read, TIterator & it, unsigned errors, const un
 	}
 	if (errors == 0)
 	{
-		if (!goDown(it, read[windowStart+compareLevel]))
-		{
-			if (maxLevel < compareLevel)
-			{
-				clear(occ);
-				append(occ,getOccurrences(it));
-				maxLevel = compareLevel;
-				//std::cout << "NEW MAX " << maxLevel << " ";
-				//printUnsignedString(occ);
-			}
-			else if (maxLevel == compareLevel)
-			{
-				append(occ,getOccurrences(it));
-				//std::cout << "MAX REACHED " << maxLevel << " ";
-				//printUnsignedString(occ);		
-			}
-			return 0;
-		}
-		else
-		{
-			backtrack(read, it, 0, windowStart, maxLevel, occ);
-			goUp(it);
-			return 0;
-		}
+		//if (!goDown(it, read[windowStart+compareLevel]))
+		//{
+			//if (maxLevel < compareLevel)
+			//{
+				//clear(occ);
+				//append(occ,getOccurrences(it));
+				//maxLevel = compareLevel;
+				////std::cout << "NEW MAX " << maxLevel << " ";
+				////printUnsignedString(occ);
+			//}
+			//else if (maxLevel == compareLevel)
+			//{
+				//append(occ,getOccurrences(it));
+				////std::cout << "MAX REACHED " << maxLevel << " ";
+				////printUnsignedString(occ);		
+			//}
+			//return 0;
+		//}
+		//else
+		//{
+			//backtrack(read, it, 0, windowStart, maxLevel, occ);
+			//goUp(it);
+			//return 0;
+		//}
 	}
 	else
 	{
