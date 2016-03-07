@@ -23,6 +23,7 @@ int backtrack(const Dna5String & read, TIterator & it, unsigned errors, const un
 			if (maxLevel < compareLevel)
 			{
 				clear(occ);
+				appendValue(occ, 5);
 				//append(occ,getOccurrences(it));
 				maxLevel = compareLevel;
 				//std::cout << "NEW MAX " << maxLevel << " ";
