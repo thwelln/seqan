@@ -131,6 +131,7 @@ int main(int argc, char *argv[])
 		unsigned compareStartpos = ki*klen;
 		
 		String <unsigned> occs;
+		clear(occs);
 		unsigned maxL = 0;
 	
 		backtrack(read, sait, allowedErrors, compareStartpos, maxL, occs);
