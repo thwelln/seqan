@@ -22,14 +22,20 @@ int backtrack(const Dna5String & read, TIterator it, unsigned errors, const unsi
 			if (maxLevel < compareLevel)
 			{
 				clear(occ);
-				append(occ,getOccurrences(it));
+					for (unsigned j = 0; j < countOccurrences(it); j++)
+					{
+					appendValue(occ, getOccurrences(it)[j]);
+					}
 				maxLevel = compareLevel;
 				//std::cout << "NEW MAX " << maxLevel << " ";
 				//printUnsignedString(occ);
 			}
 			else if (maxLevel == compareLevel)
 			{
-				append(occ,getOccurrences(it));
+					for (unsigned j = 0; j < countOccurrences(it); j++)
+					{
+					appendValue(occ, getOccurrences(it)[j]);
+					}
 				//std::cout << "MAX REACHED " << maxLevel << " ";
 				//printUnsignedString(occ);		
 			}
@@ -57,7 +63,10 @@ int backtrack(const Dna5String & read, TIterator it, unsigned errors, const unsi
 				if (maxLevel < compareLevel)
 				{
 					clear(occ);
-					append(occ,getOccurrences(it));
+					for (unsigned j = 0; j < countOccurrences(it); j++)
+					{
+					appendValue(occ, getOccurrences(it)[j]);
+					}
 					maxLevel = compareLevel;
 					//std::cout << "NEW MAX " << maxLevel << " ";
 					//printUnsignedString(occ);
@@ -66,7 +75,10 @@ int backtrack(const Dna5String & read, TIterator it, unsigned errors, const unsi
 				}
 				else if (maxLevel == compareLevel)
 				{
-					append(occ,getOccurrences(it));
+					for (unsigned j = 0; j < countOccurrences(it); j++)
+					{
+					appendValue(occ, getOccurrences(it)[j]);
+					}
 					//std::cout << "MAX REACHED " << maxLevel << " ";
 					//printUnsignedString(occ);			
 				}
@@ -127,6 +139,7 @@ int main(int argc, char *argv[])
 
 		
 		String <unsigned> occs;
+		clear(occs);
 		unsigned maxL = 0;
 	
 		backtrack(read, fmit, allowedErrors, compareStartpos, 0, maxL, occs);
@@ -142,7 +155,7 @@ int main(int argc, char *argv[])
 			{
 				unsigned findPos = occs[i]+maxL;
 				
-				std::cout << ki << " : " << findPos << "\t";
+				//std::cout << ki << " : " << findPos << "\t";
 				if (findPos == readStartPos+length(read)-ki*klen)
 				{
 					found = 1;

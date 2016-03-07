@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
 			{
 				unsigned findPos = occs[i]+maxL;
 				
-				std::cout << ki << " : " << findPos << "\t";
+				//std::cout << ki << " : " << findPos << "\t";
 				if (findPos == readStartPos+length(read)-ki*klen)
 				{
 					found = 1;

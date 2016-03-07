@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 		unsigned compareStartpos = ki*klen;
 		if (!goDown(fmit, infixWithLength(read, (compareStartpos), klen))) // compare full k-mere
 		{
-			std::cout << "FN!" << std::endl;
+			//std::cout << "FN!" << std::endl;
 			goRoot(fmit);
 			++fn;
 			continue;
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 		{
 			unsigned findPos = getOccurrences(fmit)[i]+compareLength;
 			
-			std::cout << ki << " : " << findPos << "\t";
+			//std::cout << ki << " : " << findPos << "\t";
 			if (findPos == readStartPos+length(read)-ki*klen)
 			{
 				found = 1;
