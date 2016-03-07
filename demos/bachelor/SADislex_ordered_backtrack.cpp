@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
 			//std::cout << length(read) << std::endl;
 			
 				// BUILDING INDEX
-				double tim = sysTime();
+				tim = sysTime();
 							
 				typedef Index<String<unsigned>, IndexSa<> > TSAIndex;
 				TSAIndex saindex(seq);
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
 				unsigned fn = 0;
 				unsigned fp = 0;
 				
-				double tim = sysTime();
+				tim = sysTime();
 
 				for (unsigned ki=0; ki<(length(read)/klen);++ki)
 				{
