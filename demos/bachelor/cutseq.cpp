@@ -23,8 +23,8 @@ int main(int argc, char *argv[])
 
 	    sprintf(outpath, "/../Sequences/incoming.fasta");
 	    CharString readFileName = getAbsolutePath(outpath);  
-	    SeqFileOut seqFileOut(toCString(readFileName));
-	    writeRecord(seqFileOut, id ,read);
+	    //SeqFileOut seqFileOut(toCString(readFileName));
+	    //writeRecord(seqFileOut, id ,read);
 
     
     return 0;
