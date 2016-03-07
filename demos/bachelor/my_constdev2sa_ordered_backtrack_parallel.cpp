@@ -85,7 +85,7 @@ int backtrack(const String<unsigned> & read, TIterator it, unsigned errors, cons
 	}
 	else
 	{
-		#pragma omp parallel
+		#pragma omp parallel num_threads(8)
 		#pragma omp for
 		for (unsigned i = 0; i < sigma; i++)
 		{
@@ -197,6 +197,7 @@ using namespace seqan;
 
 int main(int argc, char *argv[])
 {
+
 		//IMPORTANT VARIABLES
 		unsigned readStartPos = atoi(argv[1]);
 		unsigned readLength = atoi(argv[2]);
