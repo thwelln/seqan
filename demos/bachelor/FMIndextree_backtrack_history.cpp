@@ -25,7 +25,7 @@ int backtrack(const Dna5String & read, TIterator & it, unsigned errors, const un
 				clear(occ);
 				for (unsigned j = 0; j < countOccurrences(it); j++)
 				{
-					appendValue(occ, getOccurrences(it)[i]);
+					appendValue(occ, getOccurrences(it)[j]);
 				}
 				//append(occ,getOccurrences(it));
 				maxLevel = compareLevel;
@@ -36,7 +36,7 @@ int backtrack(const Dna5String & read, TIterator & it, unsigned errors, const un
 			{
 				for (unsigned j = 0; j < countOccurrences(it); j++)
 				{
-					appendValue(occ, getOccurrences(it)[i]);
+					appendValue(occ, getOccurrences(it)[j]);
 				}
 				//append(occ,getOccurrences(it));
 				//std::cout << "MAX REACHED " << maxLevel << " ";
@@ -70,7 +70,7 @@ int backtrack(const Dna5String & read, TIterator & it, unsigned errors, const un
 					clear(occ);
 					for (unsigned j = 0; j < countOccurrences(it); j++)
 					{
-					appendValue(occ, getOccurrences(it)[i]);
+					appendValue(occ, getOccurrences(it)[j]);
 					}
 					//append(occ,getOccurrences(it));
 					maxLevel = compareLevel;
@@ -83,7 +83,7 @@ int backtrack(const Dna5String & read, TIterator & it, unsigned errors, const un
 				{
 					for (unsigned j = 0; j < countOccurrences(it); j++)
 					{
-					appendValue(occ, getOccurrences(it)[i]);
+					appendValue(occ, getOccurrences(it)[j]);
 					}
 					//append(occ,getOccurrences(it));
 					//std::cout << "MAX REACHED " << maxLevel << " ";
