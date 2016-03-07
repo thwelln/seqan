@@ -18,7 +18,8 @@ int main(int argc, char *argv[])
     SeqFileIn seqFileIn(toCString(seqFileName));
     readRecord(id, seq, seqFileIn);
     
-	    Dna5String read = infixWithLength(seq, startpos, readlength);
+	    //Dna5String read = infixWithLength(seq, startpos, readlength);
+	    std::cout << length(seq);
 
 	    sprintf(outpath, "/../Sequences/incoming.fasta");
 	    CharString readFileName = getAbsolutePath(outpath);  
