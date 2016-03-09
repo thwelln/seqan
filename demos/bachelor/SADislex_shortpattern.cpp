@@ -44,8 +44,8 @@
 
 using namespace seqan;
 
-typedef GappedShape<HardwiredShape<1> > TInsideShape;	
-typedef CyclicShape<FixedShape<0,TInsideShape, 1> > TShape;
+typedef GappedShape<HardwiredShape<1,2,1> > TInsideShape;	
+typedef CyclicShape<FixedShape<0,TInsideShape, 0> > TShape;
 
 
 template <typename TLimits>
@@ -193,10 +193,10 @@ int main(int argc, char *argv[])
 			//printUnsignedString(read);
 			//std::cout << length(seq) << std::endl;
 			//std::cout << length(read) << std::endl;
-			for (unsigned k = 0; k<(readLength/TShape::span); k++)
-			{
-				std::cout << getRealPos(lim, 1, getDislexPos(lim,TUPair(1,0))+k-length(seq))<< std::endl;
-			}
+			//for (unsigned k = 0; k<(readLength/TShape::span); k++)
+			//{
+				//std::cout << getRealPos(lim, 1, getDislexPos(lim,TUPair(1,0))+k-length(seq))<< std::endl;
+			//}
 			//std::cout << getRealPos(lim, 1, 3332)<< " " << getRealPos(lim, 1, 3333) << " " << getRealPos(lim, 1, 3334) << " " << getRealPos(lim, 1, 6665) << " " << getRealPos(lim, 1, 6666) << " " << getRealPos(lim, 1, 6667) << std::endl;
 			
 				// BUILDING INDEX
