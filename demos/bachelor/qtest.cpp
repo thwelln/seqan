@@ -10,8 +10,8 @@ using namespace seqan;
 
 typedef GappedShape<HardwiredShape<1> > TInsideShape; // SHAPE: 11 SPAN: 2 
 
-Dna5String seq = "ACGACTACGCTACGATCGTATATTACGCAATGCA"
-Dna5String read = "ACTATACG"
+Dna5String seq = "ACGACTACGCTACGATCGTATATTACGCAATGCA";
+Dna5String read = "ACTATACG";
 
 Index<Dna5String, IndexQGram<TInsideShape> > qgindex(seq);
 
