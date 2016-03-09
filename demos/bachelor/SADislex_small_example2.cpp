@@ -49,29 +49,16 @@ unsigned getRealPos (TLimits lim, bool pattern,	unsigned dislexPos)
 {
 	typedef GappedShape<HardwiredShape<1> > TInsideShape;
 	
-	typedef CyclicShape<FixedShape<0,TInsideShape, 1> > TShape;
+	typedef CyclicShape<FixedShape<0,TInsideShape, 0> > TShape;
 	typedef Pair<unsigned, unsigned> TUPair;
 	typedef DislexReverseTransformMulti_<unsigned,
 	TLimits, TUPair >                             TGetDislexReversePos;
 	
 		unsigned fullDisPos = posGlobalize(TUPair(pattern,dislexPos), lim);
+		//std::cout << "test " << fullDisPos << std::endl;
 		TUPair pair = TGetDislexReversePos(TShape::span,lim) (fullDisPos);
-		//std::cout << fullDisPos << pair << std::endl;
+		//std::cout << pair << std::endl;
 		return pair.i2;
-}
-
-template <typename TLimits, typename TUPair>
-unsigned getDislexPos (TLimits lim, TUPair pair)
-{
-	typedef GappedShape<HardwiredShape<1> > TInsideShape;
-	
-	typedef CyclicShape<FixedShape<0,TInsideShape, 1> > TShape;
-	typedef DislexTransformMulti_<TUPair,
-	TLimits>                             TGetDislexPos;
-	
-		unsigned zeroPos = TGetDislexPos(TShape::span,lim) (pair);
-		//std::cout << fullDisPos << pair << std::endl;
-		return zeroPos;
 }
 
 void printUnsignedString(String<unsigned> st)
@@ -150,7 +137,7 @@ int main(int argc, char *argv[])
 	unsigned klen = 1; // length of k-mere devision in pattern
 	
 	typedef GappedShape<HardwiredShape<1> > TInsideShape;	
-	typedef CyclicShape<FixedShape<0,TInsideShape, 1> > TShape;
+	typedef CyclicShape<FixedShape<0,TInsideShape, 0> > TShape;
 	
 	// 
 	
@@ -168,9 +155,12 @@ int main(int argc, char *argv[])
     SeqFileIn readFileIn(toCString(readFileName));
     readRecord(id, readIn, readFileIn);
     
+    Dna5String text = "ACAACACCACA";
+    Dna5String pat = "AACAAC";
+    
     StringSet<seqan::Dna5String> seqs;
-    appendValue(seqs, seqIn);
-    appendValue(seqs, readIn);
+    appendValue(seqs, text);
+    appendValue(seqs,  pat);
 	
 		// TRANSLATING INTO DISLEX
 
@@ -186,81 +176,26 @@ int main(int argc, char *argv[])
 			TLimits lim = stringSetLimits(seqs);
 			//printUnsignedString(dislex);
 			
-			//std::cout << length(dislex) << std::endl;
+			std::cout << length(dislex) << std::endl;
 			
 			
 			String <unsigned> seq = prefix(dislex, posGlobalize(TUPair(1,0),lim));
 			String <unsigned> read = suffix(dislex, posGlobalize(TUPair(1,0),lim));
-			 std::cout  << sysTime() - tim << std::endl;
-			//printUnsignedString(seq);
-			//printUnsignedString(read);
-			//std::cout << length(seq) << std::endl;
-			//std::cout << length(read) << std::endl;
+			std::cout  << sysTime() - tim << std::endl;
+			printUnsignedString(seq);
+			printUnsignedString(read);
+			std::cout << length(seq) << std::endl;
+			std::cout << length(read) << std::endl;
+			for (unsigned i=0; i<10; i++)
+			{
+				std::cout << getRealPos(lim, 0, i)<< " ";
+			}
 			
-				// BUILDING INDEX
-				tim = sysTime();				
-				typedef Index<String<unsigned>, IndexSa<> > TSAIndex;
-				TSAIndex saindex(seq);
-				Iterator<TSAIndex, TopDown<> >::Type sait(saindex);
-				goDown(sait, "A");
-				goRoot(sait);
-				std::cout  << sysTime() - tim << std::endl;		
-				//SEARCHING
-				unsigned tp = 0;
-				unsigned fn = 0;
-				unsigned fp = 0;
-				tim = sysTime();
-				for (unsigned ki=0; ki<(length(read)/klen);++ki)
-				{
-					unsigned compareStartpos = ki*klen;
-					if (!goDown(sait, infixWithLength(read, (compareStartpos), klen))) // compare full k-mere
-					{
-						//std::cout << "FN!" << std::endl;
-						goRoot(sait);
-						++fn;
-						continue;
-					}
-					unsigned compareLength = klen;
-					while (countOccurrences(sait)>1 && compareStartpos+compareLength<length(read))
-					{
-						if (!goDown(sait, read[compareStartpos+compareLength])) // compare next letter
-						{
-							//std::cout << "ERROR!" <<std::endl;
-							break;
-						}
-					++compareLength;
-					}
-					bool found = 0;
-					for (unsigned i=0; i<countOccurrences(sait); ++i)
-					{
-						//std::cout << "DISPOS " << (getOccurrences(sait)[i]) << std::endl;
-						unsigned findPos = getRealPos(lim,0,(getOccurrences(sait)[i]));
-						
-						//std::cout << ki << " : " << findPos << std::endl << std::endl;
-						if (findPos == readStartPos+getRealPos(lim,1,ki*klen))
-						{
-							found = 1;
-						}
-						else
-						{
-							++fp;
-						}
-					}
-					if (found)
-					{
-						++tp;
-					}
-					else
-					{
-						++fn;
-					}
-					goRoot(sait);
-					//std::cout << std::endl;
-				}
-				std::cout  << sysTime() - tim << std::endl;	
-				std::cout << tp << std::endl;
-				std::cout << fn << std::endl;
-				std::cout << fp << std::endl;	
+			std::cout << std::endl;
+			for (unsigned j=0; j<6; j++)
+			{
+				std::cout << getRealPos(lim, 1, j)<< " ";
+			}			
 			
 				
     return 0;

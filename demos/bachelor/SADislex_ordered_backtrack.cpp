@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
     StringSet<seqan::Dna5String> seqs;
     appendValue(seqs, seqIn);
     appendValue(seqs, readIn);
-	std::cout << "READ!" << std::endl <<std::endl;
+	//std::cout << "READ!" << std::endl <<std::endl;
 	
 		// TRANSLATING INTO DISLEX
 			double tim = sysTime();
