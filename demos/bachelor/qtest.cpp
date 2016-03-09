@@ -20,8 +20,8 @@ Dna5String qgram1 = infixWithLength(read, 0, 2);
 Dna5String qgram2 = infixWithLength(read, 0, 4);
 
 hash(indexShape(qgindex),begin(qgram1));
-std::cout << countOccurences(qgindex, indexShape(qgindex)) << std::endl;
+std::cout << countOccurrences(qgindex, indexShape(qgindex)) << std::endl;
 
 hash(indexShape(qgindex),begin(qgram2));
-std::cout << countOccurences(qgindex, indexShape(qgindex)) << std::endl;
+std::cout << countOccurrences(qgindex, indexShape(qgindex)) << std::endl;
 }
