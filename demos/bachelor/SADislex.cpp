@@ -208,7 +208,7 @@ int main(int argc, char *argv[])
 				//SEARCHING
 				unsigned tp = 0;
 				unsigned fn = 0;
-				unsigned fp = 0;
+				unsigned long fp = 0;
 				tim = sysTime();
 				for (unsigned ki=0; ki<(length(read)/klen);++ki)
 				{

@@ -8,7 +8,7 @@
 
 using namespace seqan;
 
-typedef GappedShape<HardwiredShape<1,2,1> > TInsideShape;	
+typedef GappedShape<HardwiredShape<1> > TInsideShape;	
 
 
 int main(int argc, char *argv[])
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 		double readErrorRate = atof(argv[3]);
 	
 	
-	unsigned klen = 5; // length of k-mere devision in pattern
+	unsigned klen = 3; // length of k-mere devision in pattern
 	
 	//READ FILES IN
 	
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 	//SEARCHING
 	unsigned tp = 0;
 	unsigned fn = 0;
-	unsigned fp = 0;
+	unsigned long fp = 0;
 	tim = sysTime();
 	for (unsigned ki=0; ki<(length(read)/klen);++ki)
 	{
