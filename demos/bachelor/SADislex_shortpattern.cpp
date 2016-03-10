@@ -44,8 +44,8 @@
 
 using namespace seqan;
 
-typedef GappedShape<HardwiredShape<1,2,1> > TInsideShape;	
-typedef CyclicShape<FixedShape<0,TInsideShape, 0> > TShape;
+typedef GappedShape<HardwiredShape<1> > TInsideShape;	
+typedef CyclicShape<FixedShape<0,TInsideShape, 1> > TShape;
 
 
 template <typename TLimits>

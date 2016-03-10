@@ -8,7 +8,7 @@
 
 using namespace seqan;
 
-typedef GappedShape<HardwiredShape<1> > TInsideShape;	
+typedef GappedShape<HardwiredShape<1,1> > TInsideShape;	
 
 
 int main(int argc, char *argv[])
